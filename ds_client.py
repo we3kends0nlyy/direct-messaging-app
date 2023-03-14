@@ -62,11 +62,27 @@ def req_msgs(server, port, username, password, request, test, recv, x):
         test.write(j + '\r\n')
         test.flush()
         srv_msg = recv.readline()[:-1]
-        msg = ds_protocol.extract_json4(srv_msg)
-        print(f"{msg[0]}")
+        if request == "new":
+            try:
+                msg = ds_protocol.extract_json4(srv_msg)
+                user = ds_protocol.extract_user(srv_msg)
+                if len(msg) > 0 and len(user) > 0:
+                    print(f"Your newest message is: {msg[0]}")
+                    print(f"This message is from {user[0]}")
+                else:
+                    print("You have no new messages.")
+            except TypeError:
+                print("You have no new messages.")
+        if request == "all":
+            msg = ds_protocol.extract_json4(srv_msg)
+            user = ds_protocol.extract_user(srv_msg)
+            print("Here is all of your messages!")
+            for i in range(len(msg)):
+                print(f"Message #{i}: {msg[i]}")
+                print(f"This message is from {user[i]}")
         break
-    
-    
+
+
 def send(server: str, port: int, username: str, password: str, message: str, recipient=None, bio: str = None):
     message_error = mess_err_checker(server, port, username, password, message, bio, recipient)
     if message_error is None:
@@ -106,6 +122,7 @@ def mess_err_checker(server, port, username, password, message, bio, recipient):
     except TypeError:
         print("ERROR\nUsername and password must be strings.")
         return False
+
 
 def dir_mess(server, port, username, password, message, bio, recipient):
     y = message.strip(" ")
