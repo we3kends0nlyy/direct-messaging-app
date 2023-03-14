@@ -45,8 +45,8 @@ def req_mess(server, port, username, password, request):
         if len(y) > 0:
             mess = connect(server, port, username, password, request)
             if mess is not False:
-                req_msgs(server, port, username, password, request, mess[1], mess[2], mess[0])
-                return True
+                returned = req_msgs(server, port, username, password, request, mess[1], mess[2], mess[0])
+                return returned
             else:
                 return mess
         else:
@@ -69,6 +69,7 @@ def req_msgs(server, port, username, password, request, test, recv, x):
                 if len(msg) > 0 and len(user) > 0:
                     print(f"Your newest message is: {msg[0]}")
                     print(f"This message is from {user[0]}")
+                    return True
                 else:
                     print("You have no new messages.")
             except TypeError:
@@ -80,6 +81,10 @@ def req_msgs(server, port, username, password, request, test, recv, x):
             for i in range(len(msg)):
                 print(f"Message #{i}: {msg[i]}")
                 print(f"This message is from {user[i]}")
+            return True
+        else:
+            print("Not a valid request.")
+            return False
         break
 
 
