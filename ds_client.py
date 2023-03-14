@@ -16,7 +16,56 @@ def send_2(server: str, port: int, username: str, password: str, request: str):
         return request_error
 
 
-def 
+def req_err_checker(server, port, username, password, request):
+    try:
+        if len(username) > 0 and len(password) > 0:
+            match = re.search(r' ', username)
+            if match:
+                print("ERROR\nUsername can't have whitespace.")
+                return False
+            else:
+                match = re.search(r' ', password)
+                if match:
+                    print("ERROR\nPassword can't have whitespace.")
+                    return False
+                else:
+                    returned = req_mess(server, port, username, password, request)
+                    return returned
+        else:
+            print("ERROR\nUsername or password is empty.")
+            return False
+    except TypeError:
+        print("ERROR\nUsername and password must be strings.")
+        return False
+
+
+def req_mess(server, port, username, password, request):
+    try:
+        y = request.strip(" ")
+        if len(y) > 0:
+            mess = connect(server, port, username, password, request)
+            if mess is not False:
+                req_msgs(server, port, username, password, request, mess[1], mess[2], mess[0])
+                return True
+            else:
+                return mess
+        else:
+            print("ERROR\Recipient can't be whitespace only.")
+    except AttributeError:
+        return None
+
+
+def req_msgs(server, port, username, password, request, test, recv, x):
+    real_msg = {"token": x[0], "directmessage": request}
+    j = to_json(real_msg)
+    while True:
+        test.write(j + '\r\n')
+        test.flush()
+        srv_msg = recv.readline()[:-1]
+        msg = ds_protocol.extract_json4(srv_msg)
+        print(f"{msg[0]}")
+        break
+    
     
 def send(server: str, port: int, username: str, password: str, message: str, recipient=None, bio: str = None):
     message_error = mess_err_checker(server, port, username, password, message, bio, recipient)
@@ -64,7 +113,7 @@ def dir_mess(server, port, username, password, message, bio, recipient):
         try:
             x = recipient.strip(" ")
             if len(x) > 0:
-                mess = connect(server, port, username, password, message, bio)
+                mess = connect(server, port, username, password, message)
                 if mess is not False:
                     msgs(server, port, username, password, message, mess[1], mess[2], mess[0], recipient)
                     return True
@@ -160,7 +209,7 @@ def error_checker_post_bio(server, port, username, password, message, bio):
         return False
 
 
-def connect(server, port, username, password, message, bio):
+def connect(server, port, username, password, message):
     with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as client:
         try:
             client.connect((server, port))
@@ -183,7 +232,7 @@ def connect(server, port, username, password, message, bio):
 
 
 def post_and_bio(server, port, username, password, message, bio):
-    rtrn_p_b = connect(server, port, username, password, message, bio)
+    rtrn_p_b = connect(server, port, username, password, message)
     if rtrn_p_b is not False:
         post(server, port, username, password, message, rtrn_p_b[1], rtrn_p_b[2], rtrn_p_b[0], bio)
         bios(server, port, username, password, message, rtrn_p_b[1], rtrn_p_b[2], rtrn_p_b[0], bio)
@@ -193,7 +242,7 @@ def post_and_bio(server, port, username, password, message, bio):
 
 
 def post_only(server, port, username, password, message, bio):
-    rtrn_p = connect(server, port, username, password, message, bio)
+    rtrn_p = connect(server, port, username, password, message)
     if rtrn_p is not False:
         post(server, port, username, password, message, rtrn_p[1], rtrn_p[2], rtrn_p[0], bio)
         return True
@@ -204,7 +253,7 @@ def post_only(server, port, username, password, message, bio):
 def bio_only(server, port, username, password, message, bio):
     y = bio.strip(" ")
     if len(y) > 0:
-        rtrn_b = connect(server, port, username, password, message, bio)
+        rtrn_b = connect(server, port, username, password, message)
         if rtrn_b is not False:
             bios(server, port, username, password, message, rtrn_b[1], rtrn_b[2], rtrn_b[0], bio)
             return True
