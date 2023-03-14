@@ -8,15 +8,7 @@ import ds_protocol
 import re
 
 
-def send_2(server: str, port: int, username: str, password: str, request: str):
-    request_error = req_err_checker(server, port, username, password, request)
-    if request_error is None:
-        return request_error
-    else:
-        return request_error
-
-
-def req_err_checker(server, port, username, password, request):
+def user_pass_checker(username, password):
     try:
         if len(username) > 0 and len(password) > 0:
             match = re.search(r' ', username)
@@ -29,14 +21,27 @@ def req_err_checker(server, port, username, password, request):
                     print("ERROR\nPassword can't have whitespace.")
                     return False
                 else:
-                    returned = req_mess(server, port, username, password, request)
-                    return returned
-        else:
-            print("ERROR\nUsername or password is empty.")
-            return False
+                    return True
     except TypeError:
         print("ERROR\nUsername and password must be strings.")
         return False
+    
+
+def send_2(server: str, port: int, username: str, password: str, request: str):
+    request_error = req_err_checker(server, port, username, password, request)
+    if request_error is None:
+        return request_error
+    else:
+        return request_error
+
+
+def req_err_checker(server, port, username, password, request):
+    use = user_pass_checker(username, password)
+    if use is True:
+        returned = req_mess(server, port, username, password, request)
+        return returned
+    else:
+        return use
 
 
 def req_mess(server, port, username, password, request):
@@ -107,47 +112,36 @@ def send(server: str, port: int, username: str, password: str, message: str, rec
 
 
 def mess_err_checker(server, port, username, password, message, bio, recipient):
-    try:
-        if len(username) > 0 and len(password) > 0:
-            match = re.search(r' ', username)
-            if match:
-                print("ERROR\nUsername can't have whitespace.")
-                return False
-            else:
-                match = re.search(r' ', password)
-                if match:
-                    print("ERROR\nPassword can't have whitespace.")
-                    return False
-                else:
-                    returned = dir_mess(server, port, username, password, message, bio, recipient)
-                    return returned
-        else:
-            print("ERROR\nUsername or password is empty.")
-            return False
-    except TypeError:
-        print("ERROR\nUsername and password must be strings.")
-        return False
+    use = user_pass_checker(username, password)
+    if use is True:
+        returned = dir_mess(server, port, username, password, message, bio, recipient)
+        return returned
+    else:
+        return use
 
 
 def dir_mess(server, port, username, password, message, bio, recipient):
-    y = message.strip(" ")
-    if len(y) > 0:
-        try:
-            x = recipient.strip(" ")
-            if len(x) > 0:
-                mess = connect(server, port, username, password, message)
-                if mess is not False:
-                    msgs(server, port, username, password, message, mess[1], mess[2], mess[0], recipient)
-                    return True
+    try:
+        y = message.strip(" ")
+        if len(y) > 0:
+            try:
+                x = recipient.strip(" ")
+                if len(x) > 0:
+                    mess = connect(server, port, username, password, message)
+                    if mess is not False:
+                        msgs(server, port, username, password, message, mess[1], mess[2], mess[0], recipient)
+                        return True
+                    else:
+                        return mess
                 else:
-                    return mess
-            else:
-                print("ERROR\Recipient can't be whitespace only.")
-        except AttributeError:
-            return None
-    else:
-        print("ERROR\nMessage can't be whitespace only.")
-        return False
+                    print("ERROR\Recipient can't be whitespace only.")
+            except AttributeError:
+                return None
+        else:
+            print("ERROR\nMessage can't be whitespace only.")
+            return False
+    except AttributeError:
+        return None
 
 
 def msgs(server, port, username, password, message, test, recv, x, recipient):
@@ -172,40 +166,26 @@ def after_connect_join(server, port, test, recv, username, password, client):
 
 
 def error_checker_bio(server, port, username, password, message, bio):
-    try:
-        if len(username) > 0 and len(password) > 0:
-            match = re.search(r' ', username)
-            if match:
-                print("ERROR\nUsername can't have whitespace.")
+    use = user_pass_checker(username, password)
+    if use is True:
+        if message is None:
+            if bio is not None:
+                if type(bio) == str:
+                    returned = bio_only(server, port, username, password, message, bio)
+                    return returned
+                else:
+                    print("ERROR\nBio must be a string.")
+                    return False
+            else:
+                return False
+        else:
+            if type(message) != str:
+                print("ERROR\nMessage must be a string.")
                 return False
             else:
-                match = re.search(r' ', password)
-                if match:
-                    print("ERROR\nPassword can't have whitespace.")
-                    return False
-                else:
-                    if message is None:
-                        if bio is not None:
-                            if type(bio) == str:
-                                returned = bio_only(server, port, username, password, message, bio)
-                                return returned
-                            else:
-                                print("ERROR\nBio must be a string.")
-                                return False
-                        else:
-                            return False
-                    else:
-                        if type(message) != str:
-                            print("ERROR\nMessage must be a string.")
-                            return False
-                        else:
-                            pass
-        else:
-            print("ERROR\nUsername or password is empty.")
-            return False
-    except TypeError:
-        print("ERROR\nUsername and password must be strings.")
-        return False
+                pass
+    else:
+        return use
 
 
 def error_checker_post(server, port, username, password, message, bio):
