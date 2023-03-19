@@ -22,10 +22,13 @@ def user_pass_checker(username, password):
                     return False
                 else:
                     return True
+        else:
+            print("ERROR\nUsername or password is empty.")
+            return False
     except TypeError:
         print("ERROR\nUsername and password must be strings.")
         return False
-    
+
 
 def send_2(server: str, port: int, username: str, password: str, request: str):
     request_error = req_err_checker(server, port, username, password, request)
@@ -50,47 +53,54 @@ def req_mess(server, port, username, password, request):
         if len(y) > 0:
             mess = connect(server, port, username, password, request)
             if mess is not False:
-                returned = req_msgs(server, port, username, password, request, mess[1], mess[2], mess[0])
-                return returned
+                if request is "new":
+                    returned = req_msgs_new(server, port, username, password, request, mess[1], mess[2], mess[0])
+                    return returned
+                if request is "all":
+                    returned = req_msgs_all(server, port, username, password, request, mess[1], mess[2], mess[0])
+                    return returned
             else:
                 return mess
         else:
-            print("ERROR\Recipient can't be whitespace only.")
+            print("ERROR\nRequest can't be whitespace only.")
+            return False
     except AttributeError:
         return None
 
 
-def req_msgs(server, port, username, password, request, test, recv, x):
+def req_msgs_new(server, port, username, password, request, test, recv, x):
     real_msg = {"token": x[0], "directmessage": request}
     j = to_json(real_msg)
     while True:
         test.write(j + '\r\n')
         test.flush()
         srv_msg = recv.readline()[:-1]
-        if request == "new":
-            try:
-                msg = ds_protocol.extract_json4(srv_msg)
-                user = ds_protocol.extract_user(srv_msg)
-                if len(msg) > 0 and len(user) > 0:
-                    print(f"Your newest message is: {msg[0]}")
-                    print(f"This message is from {user[0]}")
-                    return True
-                else:
-                    print("You have no new messages.")
-            except TypeError:
-                print("You have no new messages.")
-        if request == "all":
-            msg = ds_protocol.extract_json4(srv_msg)
-            user = ds_protocol.extract_user(srv_msg)
-            print("Here is all of your messages!")
-            for i in range(len(msg)):
-                print(f"Message #{i}: {msg[i]}")
-                print(f"This message is from {user[i]}")
-            return True
-        else:
-            print("Not a valid request.")
-            return False
-        break
+        #new_list = []
+        msg = ds_protocol.extract_json4(srv_msg)
+        user = ds_protocol.extract_user(srv_msg)
+        ds_protocol.combine(msg, user)
+        #if len(msg) > 0 and len(user) > 0:
+            #print(f"Your newest message is: {msg[0]}")
+            #print(f"This message is from {user[0]}")
+            #new_list.append(msg[0])
+        return msg
+
+
+def req_msgs_all(server, port, username, password, request, test, recv, x):
+    real_msg = {"token": x[0], "directmessage": request}
+    j = to_json(real_msg)
+    while True:
+        test.write(j + '\r\n')
+        test.flush()
+        srv_msg = recv.readline()[:-1]
+        msg = ds_protocol.extract_json4(srv_msg)
+        user = ds_protocol.extract_user(srv_msg)
+        ds_protocol.combine(msg, user)
+        #print("Here is all of your messages!")
+        #for i in range(len(msg)):
+            #print(f"Message #{i}: {msg[i]}")
+            #print(f"This message is from {user[i]}")
+        return msg
 
 
 def send(server: str, port: int, username: str, password: str, message: str, recipient=None, bio: str = None):
@@ -112,6 +122,16 @@ def send(server: str, port: int, username: str, password: str, message: str, rec
 
 
 def mess_err_checker(server, port, username, password, message, bio, recipient):
+    '''
+    This method calls the user_pass_checker method.
+    If True is returned, the dir_mess method is
+    called which is connected the msgs method.
+    Once this line reaches the end, the result
+    is either successfully sending a direct
+    message to a user and returning True, or
+    an error being caugnt along the
+    way and returning False.
+    '''
     use = user_pass_checker(username, password)
     if use is True:
         returned = dir_mess(server, port, username, password, message, bio, recipient)
@@ -134,7 +154,8 @@ def dir_mess(server, port, username, password, message, bio, recipient):
                     else:
                         return mess
                 else:
-                    print("ERROR\Recipient can't be whitespace only.")
+                    print("ERROR\nRecipient can't be whitespace only.")
+                    return False
             except AttributeError:
                 return None
         else:
@@ -166,48 +187,43 @@ def after_connect_join(server, port, test, recv, username, password, client):
 
 
 def error_checker_bio(server, port, username, password, message, bio):
-    use = user_pass_checker(username, password)
-    if use is True:
-        if message is None:
-            if bio is not None:
-                if type(bio) == str:
-                    returned = bio_only(server, port, username, password, message, bio)
-                    return returned
-                else:
-                    print("ERROR\nBio must be a string.")
-                    return False
+    if message is None:
+        if bio is not None:
+            if type(bio) == str:
+                returned = bio_only(server, port, username, password, message, bio)
+                return returned
             else:
+                print("ERROR\nBio must be a string.")
                 return False
         else:
-            if type(message) != str:
-                print("ERROR\nMessage must be a string.")
-                return False
-            else:
-                pass
+            return False
     else:
-        return use
+        if type(message) != str:
+            print("ERROR\nMessage must be a string.")
+            return False
+        else:
+            pass
 
 
 def error_checker_post(server, port, username, password, message, bio):
-    x = message.strip(" ")
-    if len(x) > 0:
-        if bio is not None:
-            pass
-        else:
-            returned3 = post_only(server, port, username, password, message, bio)
-            return returned3
+    if bio is not None:
+        pass
     else:
-        print("ERROR\nMessage is empty.")
-        return False
+        returned3 = post_only(server, port, username, password, message, bio)
+        return returned3
 
 
 def error_checker_post_bio(server, port, username, password, message, bio):
-    y = bio.strip(" ")
-    if len(y) > 0:
-        returned2 = post_and_bio(server, port, username, password, message, bio)
-        return returned2
-    else:
-        print("ERROR\nBio cant be whitespace only.")
+    try:
+        y = bio.strip(" ")
+        if len(y) > 0:
+            returned2 = post_and_bio(server, port, username, password, message, bio)
+            return returned2
+        else:
+            print("ERROR\nBio cant be whitespace only.")
+            return False
+    except AttributeError:
+        print("ERROR")
         return False
 
 
@@ -228,7 +244,8 @@ def connect(server, port, username, password, message):
                 print("Once a password is registered")
                 print("with a user, you must always\nuse that same password.")
                 return False
-        except (ConnectionRefusedError, TimeoutError, socket.gaierror, TypeError, OSError):
+        except (ConnectionRefusedError, TimeoutError, socket.gaierror, TypeError, OSError) as e:
+            print(e)
             print("Connection error.")
             return False
 

@@ -523,27 +523,14 @@ def C_checker(command, choice):
     '''
     Checks the C command. This creates the new file.
     '''
-    x_out = command.split(" ")
-    if x_out[0] == "C":
-        z = command.split(" ")
-        spltcommand = command.split("C /")
-        file_name = z[-1] + ".dsu"
-        try:
-            y = spltcommand[1].split(" ")
-            y2 = spltcommand[-1].split(" -n")
-            new_string = "/" + y2[0]
-            new_path = new_string + "/" + file_name
-            post.store_file_route(new_path)
-            file_route_store(new_path)
-            try:
-                return a2.C_file_maker(new_string, file_name, new_path)
-            except IndexError:
-                print("ERROR")
-        except IndexError:
-            print("ERROR")
-            print("Index out of range")
-    else:
-        O_checker(command, choice)
+    file_name = command + ".dsu"
+    post.store_file_route(new_path)
+    file_route_store(new_path)
+    try:
+        return a2.C_file_maker(new_string, file_name, new_path)
+    except IndexError:
+        print("ERROR")
+
 
 
 def D_checker(command, choice):

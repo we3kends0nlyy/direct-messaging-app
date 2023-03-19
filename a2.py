@@ -137,11 +137,8 @@ def C_file_maker(tha_path, file_name, new_path):
     if (myPath.is_file()):
         open_file(new_path, new_path)
     else:
-        try:
-            user.user_asker(new_path, tha_path, file_name)
-            return print_new_file(tha_path, file_name)
-        except IndexError:
-            print("ERROR")
+        with open(os.path.join(pathe, serv_name), 'w') as fp:
+            pass
 
 
 def print_new_file(pathe, name_file):

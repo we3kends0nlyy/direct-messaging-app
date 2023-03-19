@@ -58,8 +58,16 @@ def extract_json4(json_msg: str) -> DataTuple4:
     try:
         json_obj = json.loads(json_msg)
         baz = json_obj['response']['messages']
-        for i in range(len(baz)):
-            msgs.append(baz[i]['message'])
     except json.JSONDecodeError:
         print("Json cannot be decoded.")
-    return msgs
+    return baz
+
+def combine(msgs, users):
+    my_dict = {}
+    for i in range(len(msgs)):
+        if users[i] in my_dict:
+            my_dict[users[i]].append(msgs[i])
+        else:
+            msg_list = []
+            msg_list.append(msgs[i])
+            my_dict[users[i]] = msg_list
