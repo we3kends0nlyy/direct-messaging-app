@@ -64,5 +64,5 @@ class DirectMessenger:
                 msgss.append(directmessage)
             return msgss
         else:
-            return request_error
+            return srv_msgg
         pass

@@ -173,7 +173,8 @@ def msgs(server, port, username, password, message, test, recv, x, recipient):
         test.flush()
         srv_msg = recv.readline()[:-1]
         msg = ds_protocol.extract_json3(srv_msg)
-        print(f"{msg[0]}!")
+        msg_store = ds_protocol.extract_sent(real_msg)
+        #print(f"{msg[0]}!")
         break
 
 def after_connect_join(server, port, test, recv, username, password, client):

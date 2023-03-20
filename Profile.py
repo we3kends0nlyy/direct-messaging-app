@@ -124,6 +124,13 @@ class Profile:
         self.password = password  # REQUIRED
         self.bio = ''            # OPTIONAL
         self._posts = []         # OPTIONAL
+        self.messages = []
+
+    def add_message(self, message):
+        '''
+        This message messages into the self.message list so that messages are stored locally.
+        '''
+        self.messages.append(message)
 
     """
 
@@ -138,6 +145,7 @@ class Profile:
     implement your add_post code.
 
     """
+
 
     def add_post(self, post: Post) -> None:
         self._posts.append(post)
@@ -224,6 +232,7 @@ class Profile:
                 self.password = obj['password']
                 self.dsuserver = obj['dsuserver']
                 self.bio = obj['bio']
+                self.messages = obj['messages']
                 for post_obj in obj['_posts']:
                     post = Post(post_obj['entry'], post_obj['timestamp'])
                     self._posts.append(post)
