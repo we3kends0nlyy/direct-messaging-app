@@ -81,24 +81,14 @@ def extract_sent(json_msg) -> DataTuple7:
         baz = json_msg['directmessage']
         outside_list2 = []
         outout = []
-        assign.load_profile("/Users/we3kends0onlyy/Documents/TEST ING/myjournal.dsu")
+        assign.load_profile("/Users/we3kends0onlyy/Documents/TEST ING/meme.dsu")
         sent_msgs = {}
         outside_list2.append(sent_msgs)
         outout.append(outside_list2)
-        #print(assign.messages[0][0]['username'])
-        #print(assign.messages[1])
-        #quit()
-        #make the messages sent have 3 brackets around them
-        print(len(assign.messages))
-        print(assign.messages[0])
-        print(assign.messages[1])
-        #print(type(assign.messages[0][0][0]))
-        #quit()
         try:
             if type(assign.messages[0][0]) is dict:
                 try:
                     if len(assign.messages) == 1:
-                        print("WUSYANAME")
                         x = assign.messages
                         msg_list2 = []
                         msg_list2.append(baz)
@@ -107,7 +97,7 @@ def extract_sent(json_msg) -> DataTuple7:
                         final.append(outout)
                         assign.messages = final
                         assign.add_message(x)
-                        assign.save_profile("/Users/we3kends0onlyy/Documents/TEST ING/myjournal.dsu")
+                        assign.save_profile("/Users/we3kends0onlyy/Documents/TEST ING/meme.dsu")
                 except:
                     z = assign.messages
                     msg_list2 = []
@@ -115,40 +105,38 @@ def extract_sent(json_msg) -> DataTuple7:
                     try:
                         z[0][0][0][baz['recipient']] = msg_list2
                         assign.messages = z
-                        assign.save_profile("/Users/we3kends0onlyy/Documents/TEST ING/myjournal.dsu")
+                        assign.save_profile("/Users/we3kends0onlyy/Documents/TEST ING/meme.dsu")
                     except:
-                            msg_list2 = []
-                            msg_list2.append(baz)
-                            sent_msgs[baz['recipient']] = msg_list2
-                            assign.add_message(outout)
-                            assign.save_profile("/Users/we3kends0onlyy/Documents/TEST ING/myjournal.dsu")
+                        msg_list2 = []
+                        msg_list2.append(baz)
+                        sent_msgs[baz['recipient']] = msg_list2
+                        assign.add_message(outout)
+                        assign.save_profile("/Users/we3kends0onlyy/Documents/TEST ING/meme.dsu")
             elif type(assign.messages[0][0][0]) is dict:
-                if len(assign.messages[0][0][0][baz['recipient']]) > 0:
-                    print("EHHEEH")
-                    x = assign.messages[1]
+                try:
+                    if len(assign.messages[0][0][0][baz['recipient']]) > 0:
+                        y = assign.messages
+                        y[0][0][0][baz['recipient']].append(baz)
+                        assign.messages = y
+                        assign.save_profile("/Users/we3kends0onlyy/Documents/TEST ING/meme.dsu")
+                except KeyError:
+                    msg_list2 = []
+                    msg_list2.append(baz)
                     y = assign.messages
-                    y[0][0][0][baz['recipient']].append(baz)
+                    y[0][0][0][baz['recipient']] = msg_list2
                     assign.messages = y
-                    #assign.add_message(x)
-                    print("test222")
-                    assign.save_profile("/Users/we3kends0onlyy/Documents/TEST ING/myjournal.dsu")
-                else:
-                    if len(assign.messages[1][0][0][baz['recipient']]) > 0:
-                        x = assign.messages
-                        x[0][0][0][baz['recipient']].append(baz)
-                        assign.messages = x
-                        assign.save_profile("/Users/we3kends0onlyy/Documents/TEST ING/myjournal.dsu")
+                    assign.save_profile("/Users/we3kends0onlyy/Documents/TEST ING/meme.dsu")
         except:
             msg_list2 = []
             msg_list2.append(baz)
             sent_msgs[baz['recipient']] = msg_list2
             assign.add_message(outout)
-            assign.save_profile("/Users/we3kends0onlyy/Documents/TEST ING/myjournal.dsu")
+            assign.save_profile("/Users/we3kends0onlyy/Documents/TEST ING/meme.dsu")
     except json.JSONDecodeError:
         print("Json cannot be decoded.")
     return baz
 
-    
+
 def combine(msgs, users):
     '''
     user_list is a list of all the
@@ -205,52 +193,52 @@ def combine(msgs, users):
             my_dict[users[i]] = msg_list
     try:
         if type(assign.messages[1][0]) is dict:
-            print(assign.messages[0])
-            print(assign.messages[1])
             x = assign.messages[0]
             y = []
             y.append(x)
-            assign.messages = outside_list
-            assign.add_message(y)
+            assign.messages = y
+            assign.add_message(outside_list)
+            assign.save_profile("/Users/we3kends0onlyy/Documents/TEST ING/myjournal.dsu")
+        elif type(assign.messages[1][0][0]) is dict:
+            print(assign.messages[0])
+            print(assign.messages[1])
+            new = []
+            y = assign.messages[0]
+            new.append(y)
+            z = []
+            z.append(outside_list)
+            new.append(z)
+            assign.messages = new
             assign.save_profile("/Users/we3kends0onlyy/Documents/TEST ING/myjournal.dsu")
         else:
-            print("test2")
             assign.messages = assign.messages[1][0]
             assign.add_message(outside_list)
             assign.save_profile("/Users/we3kends0onlyy/Documents/TEST ING/myjournal.dsu")
     except IndexError:
         try:
             if type(assign.messages[0][0]) is list:
-                x = assign.messages
-                assign.messages = outside_list
+                x = []
+                x.append(outside_list)
                 assign.add_message(x)
                 assign.save_profile("/Users/we3kends0onlyy/Documents/TEST ING/myjournal.dsu")
             elif type(assign.messages[0][0]) is dict:
-                print("newtest")
                 x = assign.messages
                 assign.messages = x
                 assign.save_profile("/Users/we3kends0onlyy/Documents/TEST ING/myjournal.dsu")
             else:
                 if type(assign.messages[0]) is dict:
-                    print("test4")
                     x = assign.messages[1]
                     assign.messages.append(x)
-                    #assign.add_message = x
                     assign.add_message(outside_list)
                     assign.save_profile("/Users/we3kends0onlyy/Documents/TEST ING/myjournal.dsu")
                 else:
                     assign.messages = outside_list
                     assign.save_profile("/Users/we3kends0onlyy/Documents/TEST ING/myjournal.dsu")
         except:
-            print("test5")
             if type(assign.messages) is list:
                 z = assign.messages
                 assign.add_message(outside_list)
                 assign.save_profile("/Users/we3kends0onlyy/Documents/TEST ING/myjournal.dsu")
-    #except IndexError:
-        #pass
-    #y = assign.messages
-    #assign.messages = []
     '''
     for i in # the index that has the sent and received as two lists, index 0 and index 1, check if 'from' is a key inside because if it is then that's the messages received and that's what ill replace with my newest messages received, this way the messages sent will remain the same and the messages received wont be duplicated like theyre being right now.
     '''
