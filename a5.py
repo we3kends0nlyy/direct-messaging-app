@@ -159,7 +159,7 @@ class MainApp(tk.Frame):
         self.body.insert_contact("studentexw23") # adding one example student.
 
     def send_message(self):
-        # You must implement this!
+        # You must implement this.
         pass
 
     def add_contact(self):
