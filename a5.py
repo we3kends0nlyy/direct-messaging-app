@@ -282,58 +282,7 @@ def save_data():
             new_window()
     else:
         new_window()
-    
-'''
-def save_data():
-    info = input_user.get()
-    print(info)
 
-#def new_window2():
-root = tk.Tk()
-    #new_wind2 = Toplevel()
-    #new_wind2.geometry("250x250")
-    #new_wind2.title("Profile Info")
-input_user = tk.Entry(root)
-    #input_user_info = Button(new_wind2, text="Click to enter profile info.").pack(pady=10)
-save_info = tk.Button(root, text="Save", command=save_data)
-input_user.pack()
-save_info.pack()
-'''
-'''
-class DialogBoxes(tk.Toplevel):
-    def __init__(self, first, dlogs, file_path):
-        super().__init__(first)
-        self.file_path = file_path
-        self.dlogs = dlogs
-        self.product = []
-
-        self.input_dlogs = []
-        for i, prompt in enumerate(dlogs):
-            label = tk.Label(self, text=prompt)
-            label.grid(row=i, column=0, padx=5, pady=5)
-            inp = tk.Entry(self)
-            inp.grid(row=i, column=1, padx=5, pady=5)
-            self.input_dlogs.append(inp)
-
-        butt = tk.Button(self, text="OK", command=self.buut)
-        butt.grid(row=len(dlogs), column=0, columnspan=2, padx= 5, pady=5)
-
-    def buut(self):
-        self.product = [inp.get() for inp in self.input_dlogs]
-        self.destroy()
-        usernm = self.product[0]
-        psswrd = self.product[1]
-        serv = self.product[2]
-        match = re.search(r' ', usernm)
-        if not match and len(usernm) > 0:
-            match = re.search(r' ', psswrd)
-            if not match and len(psswrd) > 0:
-                user.user_asker(self.file_path, usernm, psswrd, serv)
-            else:
-                new_window()
-        else:
-            new_window()
-'''
 
 def error_message():
     messagebox.showerror(title="Error", message="Username/password must not contain whitespace.")
