@@ -251,7 +251,6 @@ class MainApp(tk.Frame):
         #global input_server
         input_server = tk.Entry(root2)
         save_info = tk.Button(root2, text="Save", command=save_data)
-            #input_user_info = Button(new_wind2, text="Click to enter profile info.").pack(pady=10)
         input_user.grid(row=0, column=0)
         input_password.grid(row=1, column=0)
         input_server.grid(row=2, column=0)
