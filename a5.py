@@ -3,6 +3,11 @@ from tkinter import ttk, filedialog
 from typing import Text
 from tkinter import filedialog as fd
 from tkinter.filedialog import asksaveasfile
+import os
+import re
+from tkinter import messagebox
+from tkinter import *
+import user
 
 
 class Body(tk.Frame):
@@ -198,9 +203,7 @@ class MainApp(tk.Frame):
                                                        ("all files",
                                                         "*.*")))
         print(filename)
-    
-    def create_new_file(self):
-        dsu_file = filedialog.asksaveasfile(defaultextension=".dsu", title = "Create New DSU File", filetypes=(("DSU files", ".dsu"), ("All Files", "*.*")))
+        
 
     def _draw(self):
         # Build a menu and add it to the root frame.
@@ -227,6 +230,152 @@ class MainApp(tk.Frame):
         self.body.pack(fill=tk.BOTH, side=tk.TOP, expand=True)
         self.footer = Footer(self.root, send_callback=self.send_message)
         self.footer.pack(fill=tk.BOTH, side=tk.BOTTOM)
+
+
+    def create_new_file(self):
+        global dsu_file
+        dsu_file = filedialog.asksaveasfilename(defaultextension=".dsu", title = "Create New DSU File", filetypes=(("DSU files", ".dsu"), ("All Files", "*.*")))
+        asks = ["Username:", "Password:", "Server IP:"]
+        main = tk.Tk()
+        main.withdraw()
+        global input_user
+        global input_password
+        global input_server
+        global save_info
+        global root2
+        root2 = tk.Tk()
+        #global input_user
+        input_user = tk.Entry(root2)
+        #global input_password
+        input_password = tk.Entry(root2)
+        #global input_server
+        input_server = tk.Entry(root2)
+        save_info = tk.Button(root2, text="Save", command=save_data)
+            #input_user_info = Button(new_wind2, text="Click to enter profile info.").pack(pady=10)
+        input_user.grid(row=0, column=0)
+        input_password.grid(row=1, column=0)
+        input_server.grid(row=2, column=0)
+        save_info.grid(row=3, column=0)
+        #new_window2()
+        #dd = DialogBoxes(main, asks, dsu_file)
+        #dd.wait_window(dd)
+
+def close_q():
+    root2.destroy()
+
+
+def new_window():
+    new_wind = Toplevel()
+    new_wind.geometry("200x200")
+    new_wind.title("Error")
+    er_msg = Label(new_wind, text="Username/password must not contain whitespace.").pack(pady=10)
+    close = Button(new_wind, text="Ok", comand=new_wind.destroy).pack(pady=10)
+
+def save_data():
+    u = input_user.get()
+    p = input_password.get()
+    s = input_server.get()
+    match = re.search(r' ', u)
+    if not match and len(u) > 0:
+        match = re.search(r' ', p)
+        if not match and len(p) > 0:
+            user.user_asker(dsu_file, u, p, s)
+            close_q()
+        else:
+            new_window()
+    else:
+        new_window()
+    
+'''
+def save_data():
+    info = input_user.get()
+    print(info)
+
+#def new_window2():
+root = tk.Tk()
+    #new_wind2 = Toplevel()
+    #new_wind2.geometry("250x250")
+    #new_wind2.title("Profile Info")
+input_user = tk.Entry(root)
+    #input_user_info = Button(new_wind2, text="Click to enter profile info.").pack(pady=10)
+save_info = tk.Button(root, text="Save", command=save_data)
+input_user.pack()
+save_info.pack()
+'''
+'''
+class DialogBoxes(tk.Toplevel):
+    def __init__(self, first, dlogs, file_path):
+        super().__init__(first)
+        self.file_path = file_path
+        self.dlogs = dlogs
+        self.product = []
+
+        self.input_dlogs = []
+        for i, prompt in enumerate(dlogs):
+            label = tk.Label(self, text=prompt)
+            label.grid(row=i, column=0, padx=5, pady=5)
+            inp = tk.Entry(self)
+            inp.grid(row=i, column=1, padx=5, pady=5)
+            self.input_dlogs.append(inp)
+
+        butt = tk.Button(self, text="OK", command=self.buut)
+        butt.grid(row=len(dlogs), column=0, columnspan=2, padx= 5, pady=5)
+
+    def buut(self):
+        self.product = [inp.get() for inp in self.input_dlogs]
+        self.destroy()
+        usernm = self.product[0]
+        psswrd = self.product[1]
+        serv = self.product[2]
+        match = re.search(r' ', usernm)
+        if not match and len(usernm) > 0:
+            match = re.search(r' ', psswrd)
+            if not match and len(psswrd) > 0:
+                user.user_asker(self.file_path, usernm, psswrd, serv)
+            else:
+                new_window()
+        else:
+            new_window()
+'''
+
+def error_message():
+    messagebox.showerror(title="Error", message="Username/password must not contain whitespace.")
+
+'''
+class custom_error(tk.Toplevel):
+    def __init__(self, first, title=None, message=None):
+        tk.Toplevel.__init__(self, first)
+        self.transient(first)
+        if title:
+            self.title(title)
+        self.result = None
+        self.first = first
+        self.message = message
+        self.disp_mess()
+        self.grab_set()
+        self.wait_window(self)
+    
+    def disp_mess(self):
+        self.label = tk.Label(self, text="", wraplength=250)
+        self.label.pack(padx=10, pady=10)
+        button = tk.Button(self, text="OK", command =self.ok)
+        button.pack(pady=10)
+        
+    def ok(self):
+        self.destroy()
+    
+    def error(self, message):
+        self.label.config(text=message)
+        self.title("Error")
+        self.grab_set()
+        self.wait_window(self)
+    
+main = tk.Tk()
+
+def error():
+    d = custom_error(main)
+    d.error("Username/password must not contain whitespace.")
+'''
 
 
 if __name__ == "__main__":

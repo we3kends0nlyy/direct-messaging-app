@@ -77,7 +77,17 @@ def save_from_e(usr, psw, bio, pst, dpst, file_path):
         print("You did not delete any posts")
 
 
-def user_asker(file_path, pathe, serv_name):
+def user_asker(file_path, username, password, serv):
+    with open(file_path, "w") as fp:
+        pass
+    assign = Profile()
+    assign.save_profile(file_path)
+    assign.dsuserver = serv
+    assign.username = username
+    assign.password = password
+    #assign.bio = z
+    assign.save_profile(file_path)
+    '''
     x = input("Please input username:\n")
     if x == "Q":
         quit()
@@ -102,15 +112,7 @@ server you CANNOT", end="")
                     print(" go back and edit it.")
                     serv = input("Ok enter it now:\n")
                     myPath = Path(file_path)
-                    with open(os.path.join(pathe, serv_name), 'w') as fp:
-                        pass
-                    assign = Profile()
-                    assign.save_profile(file_path)
-                    assign.dsuserver = serv
-                    assign.username = x
-                    assign.password = y
-                    assign.bio = z
-                    assign.save_profile(file_path)
+
                 elif option == "skip":
                     print("That's ok, you can always add a bio later.")
                     serv = input("Enter your DSU server number:\n")
@@ -146,3 +148,4 @@ server you CANNOT", end="")
     else:
         print("Usernames must not have whitespace.")
         user_asker(file_path, pathe, serv_name)
+    '''
