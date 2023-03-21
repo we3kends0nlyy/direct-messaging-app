@@ -256,9 +256,7 @@ class MainApp(tk.Frame):
         input_password.grid(row=1, column=0)
         input_server.grid(row=2, column=0)
         save_info.grid(row=3, column=0)
-        #new_window2()
-        #dd = DialogBoxes(main, asks, dsu_file)
-        #dd.wait_window(dd)
+
 
 def close_q():
     root2.destroy()
