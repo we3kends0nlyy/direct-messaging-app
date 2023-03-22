@@ -4,6 +4,7 @@
 from pathlib import Path
 import re
 import os
+import a5
 import a2
 import ui
 import checker
@@ -78,15 +79,18 @@ def save_from_e(usr, psw, bio, pst, dpst, file_path):
 
 
 def user_asker(file_path, username, password, serv):
-    with open(file_path, "w") as fp:
-        pass
-    assign = Profile()
-    assign.save_profile(file_path)
-    assign.dsuserver = serv
-    assign.username = username
-    assign.password = password
-    #assign.bio = z
-    assign.save_profile(file_path)
+    try:
+        with open(file_path, "w") as fp:
+            pass
+        assign = Profile()
+        assign.save_profile(file_path)
+        assign.dsuserver = serv
+        assign.username = username
+        assign.password = password
+        #assign.bio = z
+        assign.save_profile(file_path)
+    except OSError:
+        a5.os_error()
     '''
     x = input("Please input username:\n")
     if x == "Q":
