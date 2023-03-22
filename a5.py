@@ -15,6 +15,13 @@ from ds_protocol import SaveFilePath
 import ds_client
 
 
+def profile_load_error():
+    new_wind = Toplevel()
+    new_wind.geometry("350x150+460+235")
+    new_wind.title("Error!")
+    er_msg = Label(new_wind, text="Please load a profile first.").pack(pady=10)
+    close = Button(new_wind, text="Ok", command=new_wind.destroy).pack(pady=10)
+
 class Body(tk.Frame):
     def __init__(self, root, recipient_selected_callback=None):
         tk.Frame.__init__(self, root)
@@ -33,14 +40,29 @@ class Body(tk.Frame):
             self._select_callback(entry)
 
     def insert_contact(self, contact: str):
-        self._contacts.append(contact)
-        id = len(self._contacts) - 1
-        self._insert_contact_tree(id, contact)
+        assign = Profile()
+        if contact is None or len(contact) == 0:
+            return False
+        else:
+            try:
+                if len(file_path1) > 0:
+                    assign.load_profile(file_path1)
+                    if contact not in assign.contacts:
+                        self._contacts.append(contact)
+                        id = len(self._contacts) - 1
+                        self._insert_contact_tree(id, contact)
+                    else:
+                        pass
+            except (NameError, TypeError):
+                profile_load_error()
 
     def _insert_contact_tree(self, id, contact: str):
-        if len(contact) > 25:
-            entry = contact[:24] + "..."
-        id = self.posts_tree.insert('', id, id, text=contact)
+        try:
+            if len(contact) > 25:
+                entry = contact[:24] + "..."
+            id = self.posts_tree.insert('', id, id, text=contact)
+        except TypeError:
+            pass
 
     def insert_user_message(self, message:str):
         self.entry_editor.insert(1.0, message + '\n', 'entry-right')
@@ -102,9 +124,13 @@ class Footer(tk.Frame):
 
     def send_click(self):
         if self._send_callback is not None:
-            self._send_callback()
+            try:
+                if len(file_path1) > 0:
+                    self._send_callback()
+            except (NameError, TypeError):
+                profile_load_error()
             #self.send_message()
-            
+
 
     def _draw(self):
         save_button = tk.Button(master=self, text="Send", width=20, command=self.send_click)
@@ -131,12 +157,20 @@ class NewContactDialog(tk.simpledialog.Dialog):
         self.server_entry = tk.Entry(frame, width=30)
         self.server_entry.insert(tk.END, self.server)
         self.server_entry.pack()
+        serv = self.server_entry.get()
 
         self.username_label = tk.Label(frame, width=30, text="Username")
         self.username_label.pack()
         self.username_entry = tk.Entry(frame, width=30)
         self.username_entry.insert(tk.END, self.user)
         self.username_entry.pack()
+        
+        self.password_label = tk.Label(frame, width=30, text="Password")
+        self.password_label.pack()
+        self.password_entry = tk.Entry(frame, width=30)
+        self.password_entry['show'] = '*'
+        self.password_entry.insert(tk.END, self.pwd)
+        self.password_entry.pack()
 
         # You need to implement also the region for the user to enter
         # the Password. The code is similar to the Username you see above
@@ -150,7 +184,14 @@ class NewContactDialog(tk.simpledialog.Dialog):
         self.user = self.username_entry.get()
         self.pwd = self.password_entry.get()
         self.server = self.server_entry.get()
-
+        #main = tk.Tk()
+        #conf = MainApp(main)
+        assign = Profile()
+        assign.load_profile(file_path1)
+        assign.username = self.user
+        assign.password = self.pwd
+        assign.dsuserver = self.server
+        assign.save_profile(file_path1)
 
 class MainApp(tk.Frame):
     def __init__(self, root):
@@ -171,6 +212,7 @@ class MainApp(tk.Frame):
         self._draw()
         #self.body.insert_contact("studentexw23") # adding one example student.
 
+
     def send_message(self):
         msg = self.body.get_text_entry()
         if len(msg) > 0:
@@ -184,12 +226,34 @@ class MainApp(tk.Frame):
     def add_contact(self):
         new_cont = tkinter.simpledialog.askstring("New Contact", "Enter a contact.")
         self.body.insert_contact(new_cont)
-        pass
-    '''
-    def ret_fp(self):
-        print("test1232")
-        return self.file_path
-    '''
+        assign = Profile()
+        if new_cont is None or len(new_cont) == 0:
+            return False
+        else:
+            try:
+                if len(self.file_path) > 0:
+                    assign.load_profile(self.file_path)
+                    try:
+                        if new_cont in assign.contacts:
+                            new_wind = Toplevel()
+                            new_wind.geometry("350x150+460+235")
+                            new_wind.title("Reminder!")
+                            er_msg = Label(new_wind, text="You have already added that contact.").pack(pady=10)
+                            close = Button(new_wind, text="Ok", command=new_wind.destroy).pack(pady=10)
+                        elif " " in new_cont:
+                            new_wind = Toplevel()
+                            new_wind.geometry("350x150+460+235")
+                            new_wind.title("Error!")
+                            er_msg = Label(new_wind, text="Usernames don't have whitespace.").pack(pady=10)
+                            close = Button(new_wind, text="Ok", command=new_wind.destroy).pack(pady=10)
+                        else:
+                            assign.add_contact(new_cont)
+                            assign.save_profile(self.file_path)
+                    except TypeError:
+                        pass
+            except (NameError, TypeError):
+                profile_load_error()
+
     def recipient_selected(self, recipient):
         '''
         Whatever is selected in the treeview should be passed here and made self.recipient. So when a message is sent the code knows that this is the person to send the message to.
@@ -243,6 +307,7 @@ class MainApp(tk.Frame):
 
 
     def open_filee(self):
+        global file_path1
         file_path1 = filedialog.askopenfilename(initialdir = "/", title = "Select a File", filetypes = (("DSU files", ".dsu"), ("allfiles", "*.*")))
         assign = Profile()
         assign.load_profile(file_path1)
@@ -250,7 +315,7 @@ class MainApp(tk.Frame):
         self.password = assign.password
         self.server = assign.dsuserver
         self.file_path = file_path1
-        ds_client.set_path(self.file_path)
+        #ds_client.set_path(self.file_path)
 
 
     def close_code(self):
@@ -269,17 +334,22 @@ class MainApp(tk.Frame):
             global save_info
             global root2
             root2 = tk.Tk()
-            #global input_user
+            root2.geometry("325x130+485+200")
+            root2.title("Enter your user information.")
+            descrip = tk.Label(root2, text="Username:")
+            descrip2 = tk.Label(root2, text="Password:")
+            descrip3 = tk.Label(root2, text="Server Number:")
             input_user = tk.Entry(root2)
-            #global input_password
             input_password = tk.Entry(root2)
-            #global input_server
             input_server = tk.Entry(root2)
             save_info = tk.Button(root2, text="Save", command=self.save_data)
-            input_user.grid(row=0, column=0)
-            input_password.grid(row=1, column=0)
-            input_server.grid(row=2, column=0)
-            save_info.grid(row=3, column=0)
+            descrip.grid(row=0, column=0)
+            descrip2.grid(row=1, column=0)
+            descrip3.grid(row=2, column=0)
+            input_user.grid(row=0, column=20)
+            input_password.grid(row=1, column=20)
+            input_server.grid(row=2, column=20)
+            save_info.grid(row=3, column=20)
         else:
             pass
 
@@ -307,7 +377,7 @@ class MainApp(tk.Frame):
 
     def new_window(self):
         new_wind = Toplevel()
-        new_wind.geometry("350x150")
+        new_wind.geometry("350x150+460+235")
         new_wind.title("Error")
         er_msg = Label(new_wind, text="Username/password must not contain whitespace.").pack(pady=10)
         close = Button(new_wind, text="Ok", command=new_wind.destroy).pack(pady=10)
@@ -326,7 +396,7 @@ if __name__ == "__main__":
 
     # This is just an arbitrary starting point. You can change the value
     # around to see how the starting size of the window changes.
-    main.geometry("720x480")
+    main.geometry("950x700+188+60")
 
     # adding this option removes some legacy behavior with menus that
     # some modern OSes don't support. If you're curious, feel free to comment

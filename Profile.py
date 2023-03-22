@@ -125,6 +125,15 @@ class Profile:
         self.bio = ''            # OPTIONAL
         self._posts = []         # OPTIONAL
         self.messages = []
+        self.contacts = []
+
+    
+    def add_contact(self, contact):
+        '''
+        This adds contacts to the contact list so every time the user loads their profile, their contacts are automatically added into the tree view menu.
+        '''
+        self.contacts.append(contact)
+        
 
     def add_message(self, message):
         '''
@@ -233,6 +242,7 @@ class Profile:
                 self.dsuserver = obj['dsuserver']
                 self.bio = obj['bio']
                 self.messages = obj['messages']
+                self.contacts = obj['contacts']
                 for post_obj in obj['_posts']:
                     post = Post(post_obj['entry'], post_obj['timestamp'])
                     self._posts.append(post)
