@@ -253,6 +253,7 @@ def connect(server, port, username, password, message):
                 print("ERROR\nToken not received.")
                 print("Once a password is registered")
                 print("with a user, you must always\nuse that same password.")
+                a5.user_error()
                 return False
         except (ConnectionRefusedError, TimeoutError, socket.gaierror, TypeError, OSError) as e:
             print(e)

@@ -12,7 +12,17 @@ import user
 from Profile import *
 from ds_messenger import DirectMessenger
 from ds_protocol import SaveFilePath
-import ds_c
+import ds_client
+
+
+def user_error():
+    new_wind = Toplevel()
+    new_wind.geometry("375x188+460+235")
+    new_wind.title("Error!")
+    er_msg = Label(new_wind, text="Your password does not match your current\n username. Either edit your password to the original\n password made for your current username,\n or edit your username to a new one.").pack(pady=10)
+    close = Button(new_wind, text="Ok", command=new_wind.destroy).pack(pady=10)
+
+
 def profile_load_error():
     new_wind = Toplevel()
     new_wind.geometry("350x150+460+235")
@@ -36,6 +46,7 @@ class Body(tk.Frame):
         entry = self._contacts[index]
         if self._select_callback is not None:
             self._select_callback(entry)
+            self.entry_editor.delete('1.0', tk.END)
 
     def insert_contact(self, contact: str):
         assign = Profile()
@@ -45,7 +56,7 @@ class Body(tk.Frame):
             try:
                 if len(file_path1) > 0:
                     assign.load_profile(file_path1)
-                    if contact not in assign.contacts:
+                    if contact not in assign.contacts and " " not in contact:
                         self._contacts.append(contact)
                         id = len(self._contacts) - 1
                         self._insert_contact_tree(id, contact)
@@ -214,6 +225,7 @@ class MainApp(tk.Frame):
             ds_mess = DirectMessenger(self.server, self.username, self.password)
             #p = SaveFilePath(self.file_path)
             result = ds_mess.send(msg, self.recipient)
+            
             pass
         else:
             pass
@@ -310,7 +322,7 @@ class MainApp(tk.Frame):
         self.password = assign.password
         self.server = assign.dsuserver
         self.file_path = file_path1
-        #ds_client.set_path(self.file_path)
+        ds_client.set_path(self.file_path)
 
 
     def close_code(self):
