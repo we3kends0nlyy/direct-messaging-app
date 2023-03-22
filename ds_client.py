@@ -5,7 +5,10 @@ import socket
 import json
 import time
 import ds_protocol
+from ds_protocol import SaveFilePath
 import re
+from a5 import MainApp
+import a5
 
 
 def user_pass_checker(username, password):
@@ -165,6 +168,11 @@ def dir_mess(server, port, username, password, message, bio, recipient):
         return None
 
 
+def set_path(pa):
+    global f_path
+    f_path = pa
+
+
 def msgs(server, port, username, password, message, test, recv, x, recipient):
     real_msg = {"token": x[0], "directmessage": {"entry": message,"recipient": recipient, "timestamp": time.time()}}
     j = to_json(real_msg)
@@ -172,9 +180,10 @@ def msgs(server, port, username, password, message, test, recv, x, recipient):
         test.write(j + '\r\n')
         test.flush()
         srv_msg = recv.readline()[:-1]
+        #f_path = .ret_fp()
+        fp = SaveFilePath(f_path)
         msg = ds_protocol.extract_json3(srv_msg)
-        msg_store = ds_protocol.extract_sent(real_msg)
-        #print(f"{msg[0]}!")
+        msg_store = fp.extract_sent(real_msg)
         break
 
 def after_connect_join(server, port, test, recv, username, password, client):
