@@ -297,6 +297,7 @@ class MainApp(tk.Frame):
                 self.password = p
                 self.server = s
                 self.file_path = dsu_file
+                ds_client.set_path(self.file_path)
                 self.close_q()
             else:
                 self.new_window()
