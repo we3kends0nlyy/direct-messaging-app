@@ -14,6 +14,13 @@ from ds_messenger import DirectMessenger
 from ds_protocol import SaveFilePath
 import ds_client
 
+def connection_error():
+    new_wind = Toplevel()
+    new_wind.geometry("350x150+460+235")
+    new_wind.title("Error!")
+    er_msg = Label(new_wind, text="Connection error.").pack(pady=10)
+    close = Button(new_wind, text="Ok", command=new_wind.destroy).pack(pady=10)
+
 
 def user_error():
     new_wind = Toplevel()

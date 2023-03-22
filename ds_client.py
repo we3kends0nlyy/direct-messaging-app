@@ -257,6 +257,7 @@ def connect(server, port, username, password, message):
                 return False
         except (ConnectionRefusedError, TimeoutError, socket.gaierror, TypeError, OSError) as e:
             print(e)
+            a5.connection_error()
             print("Connection error.")
             return False
 
