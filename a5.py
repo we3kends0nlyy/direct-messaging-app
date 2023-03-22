@@ -12,9 +12,7 @@ import user
 from Profile import *
 from ds_messenger import DirectMessenger
 from ds_protocol import SaveFilePath
-import ds_client
-
-
+import ds_c
 def profile_load_error():
     new_wind = Toplevel()
     new_wind.geometry("350x150+460+235")
@@ -129,7 +127,6 @@ class Footer(tk.Frame):
                     self._send_callback()
             except (NameError, TypeError):
                 profile_load_error()
-            #self.send_message()
 
 
     def _draw(self):
