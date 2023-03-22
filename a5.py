@@ -181,8 +181,6 @@ class NewContactDialog(tk.simpledialog.Dialog):
         self.user = self.username_entry.get()
         self.pwd = self.password_entry.get()
         self.server = self.server_entry.get()
-        #main = tk.Tk()
-        #conf = MainApp(main)
         assign = Profile()
         assign.load_profile(file_path1)
         assign.username = self.user
