@@ -60,9 +60,6 @@ class Body(tk.Frame):
         self.root = root
         self._contacts = [str]
         self._select_callback = recipient_selected_callback
-        # After all initialization is complete,
-        # call the _draw method to pack the widgets
-        # into the Body instance
         self._draw()
 
     def node_select(self, event):
@@ -72,6 +69,7 @@ class Body(tk.Frame):
             if self._select_callback is not None:
                 self._select_callback(entry)
                 self.entry_editor.delete('1.0', tk.END)
+                self.body.check_new_create(entry)
         except IndexError:
             pass
 
@@ -136,7 +134,10 @@ class Body(tk.Frame):
 
     def set_text_entry(self, text:str):
         self.message_editor.delete(1.0, tk.END)
-        self.message_editor.insert(1.0, text)
+        #self.message_editor.insert(1.0, text)
+        
+    def clear_box(self):
+        self.entry_editor.delete(1.0, tk.END)
 
     def _draw(self):
         posts_frame = tk.Frame(master=self, width=250)
@@ -269,6 +270,7 @@ class MainApp(tk.Frame):
 
     def send_message(self):
         msg = self.body.get_text_entry()
+        self.body.set_text_entry(msg)
         if len(msg) > 0:
             SaveFilePath(self.file_path)
             self.ds_mess = DirectMessenger(self.server, self.username, self.password)
@@ -339,6 +341,7 @@ class MainApp(tk.Frame):
         '''
         Whatever is selected in the treeview should be passed here and made self.recipient. So when a message is sent the code knows that this is the person to send the message to.
         '''
+        self.check_new_create(recipient)
         self.recipient = recipient
         ds_client.save_path(self.file_path)
         #self.ds_mess = DirectMessenger(self.server, self.username, self.password)
@@ -357,7 +360,10 @@ class MainApp(tk.Frame):
     def publish(self, message:str):
         pass
 
-    def check_new_create(self):
+    def check_new_create(self, userr):
+    '''
+    This method is run when the user clicks on a node of one of their contacts. When the node is clicked, the name of the recipient is taken and used as an argument for this here function. The variable userr is the contact selected in the treeview, and if the contact selected is equal to the user from the new message, then the message is put into the chat box.
+    '''
         try:
             if self.username is not None:
                 assign = Profile()
@@ -373,7 +379,7 @@ class MainApp(tk.Frame):
                     t = assign.new[0]
                     m = assign.new[1]
                     u = assign.new[2]
-                    if len(m) > 0:
+                    if u is userr:
                         self.body.insert_contact_message(m, u, t)
                 except (NameError, TypeError, IndexError):
                     pass
@@ -382,6 +388,10 @@ class MainApp(tk.Frame):
             pass
 
     def check_new(self):
+    '''
+    This method checks for new posts and checks if the user that sent the message is in the contact list of the user that's logged in. This method is triggered when the user opens a new file.
+    This method also alerts the new when they've gotten a new message and displays a notification. The user must click on the contact in the treeview to see the full message though. The notification can pop up from any point in the gui though since this check_new is triggered once the file is open so it runs the entire time.
+    '''
         try:
             if self.username is not None:
                 assign = Profile()
@@ -397,8 +407,27 @@ class MainApp(tk.Frame):
                     t = assign.new[0]
                     m = assign.new[1]
                     u = assign.new[2]
-                    if len(m) > 0:
-                        self.body.insert_contact_message(m, u, t)
+                    if len(u) > 0:
+                        new_wind = Toplevel()
+                        new_wind.geometry("250x125+460+235")
+                        new_wind.title("Notification!")
+                        er_msg = Label(new_wind, text=f"{u} just sent you a message!").pack(pady=10)
+                        close = Button(new_wind, text="Ok", command=new_wind.destroy).pack(pady=10)
+                        self.body.insert_contact(u)
+                        try:
+                            if len(self.file_path) > 0:
+                                assign.load_profile(self.file_path)
+                                try:
+                                    if u in assign.contacts:
+                                        pass
+                                    else:
+                                        assign.add_cont1(u)
+                                        assign.save_profile(self.file_path)
+                                except TypeError:
+                                    pass
+                        except (NameError, TypeError):
+                            pass
+                        #self.body.insert_contact_message(m, u, t)
                 except (NameError, TypeError, IndexError):
                     pass
                 self.root.after(7000, self.check_new)
@@ -451,6 +480,7 @@ class MainApp(tk.Frame):
             new_list.append(i)
         for new_cont in new_list:
             self.body.insert_contact2(new_cont)
+        self.body.clear_box()
         self.check_new()
 
     def close_code(self):
@@ -504,7 +534,7 @@ class MainApp(tk.Frame):
                 ds_client.save_path(self.file_path)
                 self.body.del_conts()
                 self.close_q()
-                self.check_new_create()
+                self.check_new()
             else:
                 self.new_window()
         else:
