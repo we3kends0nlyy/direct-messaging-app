@@ -427,7 +427,6 @@ class MainApp(tk.Frame):
                                     pass
                         except (NameError, TypeError):
                             pass
-                        #self.body.insert_contact_message(m, u, t)
                 except (NameError, TypeError, IndexError):
                     pass
                 self.root.after(7000, self.check_new)
