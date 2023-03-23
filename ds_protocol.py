@@ -143,8 +143,6 @@ class SaveFilePath():
                 assign.add_message(outside_list)
                 assign.save_profile(self.file_path)
             elif type(assign.messages[1][0][0]) is dict:
-                print(assign.messages[0])
-                print(assign.messages[1])
                 new = []
                 y = assign.messages[0]
                 new.append(y)

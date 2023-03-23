@@ -7,8 +7,12 @@ import time
 import ds_protocol
 from ds_protocol import SaveFilePath
 import re
-#from a5 import MainApp
 import a5
+
+
+def save_path(p):
+    global path
+    path = p
 
 
 def user_pass_checker(username, password):
@@ -16,6 +20,7 @@ def user_pass_checker(username, password):
         if len(username) > 0 and len(password) > 0:
             match = re.search(r' ', username)
             if match:
+                a5.space_error()
                 print("ERROR\nUsername can't have whitespace.")
                 return False
             else:
@@ -28,7 +33,8 @@ def user_pass_checker(username, password):
         else:
             print("ERROR\nUsername or password is empty.")
             return False
-    except TypeError:
+    except Exception as e:
+        print(e)
         print("ERROR\nUsername and password must be strings.")
         return False
 
@@ -78,14 +84,8 @@ def req_msgs_new(server, port, username, password, request, test, recv, x):
         test.write(j + '\r\n')
         test.flush()
         srv_msg = recv.readline()[:-1]
-        #new_list = []
+        sfp = SaveFilePath(path)
         msg = ds_protocol.extract_json4(srv_msg)
-        user = ds_protocol.extract_user(srv_msg)
-        ds_protocol.combine(msg, user)
-        #if len(msg) > 0 and len(user) > 0:
-            #print(f"Your newest message is: {msg[0]}")
-            #print(f"This message is from {user[0]}")
-            #new_list.append(msg[0])
         return msg
 
 
@@ -96,13 +96,10 @@ def req_msgs_all(server, port, username, password, request, test, recv, x):
         test.write(j + '\r\n')
         test.flush()
         srv_msg = recv.readline()[:-1]
+        sfp = SaveFilePath(path)
         msg = ds_protocol.extract_json4(srv_msg)
         user = ds_protocol.extract_user(srv_msg)
-        ds_protocol.combine(msg, user)
-        #print("Here is all of your messages!")
-        #for i in range(len(msg)):
-            #print(f"Message #{i}: {msg[i]}")
-            #print(f"This message is from {user[i]}")
+        sfp.combine(msg, user)
         return msg
 
 
@@ -181,7 +178,7 @@ def msgs(server, port, username, password, message, test, recv, x, recipient):
         test.flush()
         srv_msg = recv.readline()[:-1]
         #f_path = .ret_fp()
-        fp = SaveFilePath(f_path)
+        fp = SaveFilePath(path)
         msg = ds_protocol.extract_json3(srv_msg)
         msg_store = fp.extract_sent(real_msg)
         break
@@ -244,6 +241,7 @@ def connect(server, port, username, password, message):
             test = client.makefile("w")
             recv = client.makefile("r")
             srv_msg = after_connect_join(server, port, test, recv, username, password, client)
+            print(srv_msg)
             print("")
             if 'token' in srv_msg:
                 x = ds_protocol.extract_json(srv_msg)
@@ -256,7 +254,6 @@ def connect(server, port, username, password, message):
                 a5.user_error()
                 return False
         except (ConnectionRefusedError, TimeoutError, socket.gaierror, TypeError, OSError) as e:
-            print(e)
             a5.connection_error()
             print("Connection error.")
             return False

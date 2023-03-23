@@ -10,9 +10,21 @@ from tkinter import messagebox
 from tkinter import *
 import user
 from Profile import *
+import ds_messenger
 from ds_messenger import DirectMessenger
 from ds_protocol import SaveFilePath
 import ds_client
+import datetime
+
+
+'''
+u = usr
+lst = []
+lst.append(t)
+lst.append(m)
+lst.append(u)
+return lst
+'''
 
 def os_error():
     new_wind = Toplevel()
@@ -37,6 +49,12 @@ def user_error():
     er_msg = Label(new_wind, text="Your password does not match your current\n username. Either edit your password to the original\n password made for your current username,\n or edit your username to a new one.").pack(pady=10)
     close = Button(new_wind, text="Ok", command=new_wind.destroy).pack(pady=10)
 
+def space_error():
+    new_wind = Toplevel()
+    new_wind.geometry("350x150+460+235")
+    new_wind.title("Error!")
+    er_msg = Label(new_wind, text="Username/password can't have spaces.").pack(pady=10)
+    close = Button(new_wind, text="Ok", command=new_wind.destroy).pack(pady=10)
 
 def profile_load_error():
     new_wind = Toplevel()
@@ -57,11 +75,31 @@ class Body(tk.Frame):
         self._draw()
 
     def node_select(self, event):
-        index = int(self.posts_tree.selection()[0])
-        entry = self._contacts[index]
-        if self._select_callback is not None:
-            self._select_callback(entry)
-            self.entry_editor.delete('1.0', tk.END)
+        try:
+            print("HHH")
+            index = int(self.posts_tree.selection()[0])
+            entry = self._contacts[index]
+            if self._select_callback is not None:
+                self._select_callback(entry)
+                self.entry_editor.delete('1.0', tk.END)
+        except IndexError:
+            pass
+
+    def del_conts(self):
+        self.posts_tree.delete(*self.posts_tree.get_children())
+        for x in self._contacts:
+            self._contacts.remove(x)
+
+    def insert_contact2(self, contact: str):
+        self._contacts.append(contact)
+        id = len(self._contacts) - 1
+        self._insert_contact_tree(id, contact)
+
+    def _insert_contact_tree(self, id, contact: str):
+        if len(contact) > 25:
+            entry = contact[:24] + "..."
+        id = self.posts_tree.insert('', id, id, text=contact)
+
 
     def insert_contact(self, contact: str):
         assign = Profile()
@@ -78,21 +116,30 @@ class Body(tk.Frame):
                     else:
                         pass
             except (NameError, TypeError):
-                profile_load_error()
+                try:
+                    if len(dsu_file) > 0:
+                        assign.load_profile(dsu_file)
+                        if contact not in assign.contacts and " " not in contact:
+                            self._contacts.append(contact)
+                            id = len(self._contacts) - 1
+                            self._insert_contact_tree(id, contact)
+                        else:
+                            pass
+                except (NameError, TypeError):
+                    profile_load_error()
 
-    def _insert_contact_tree(self, id, contact: str):
-        try:
-            if len(contact) > 25:
-                entry = contact[:24] + "..."
-            id = self.posts_tree.insert('', id, id, text=contact)
-        except TypeError:
-            pass
 
-    def insert_user_message(self, message:str):
-        self.entry_editor.insert(1.0, message + '\n', 'entry-right')
+    def insert_user_message(self, message:str, recip, time):
+        '''
+        This method inserts messages that the user has sent outward to other users.
+        '''
+        self.entry_editor.insert(1.0, time + '\n' + 'Sent to: ' + recip + '\n' + 'Message: ' +  message + '\n', 'entry-right')
 
-    def insert_contact_message(self, message:str):
-        self.entry_editor.insert(1.0, message + '\n', 'entry-left')
+    def insert_contact_message(self, message:str, usr, time):
+        '''
+        This method inserts messages that the user has received from other users.
+        '''
+        self.entry_editor.insert(1.0, time + '\n' + 'From: ' + usr + '\n' +  'Message: ' + message + '\n', 'entry-left')
 
     def get_text_entry(self) -> str:
         return self.message_editor.get('1.0', 'end').rstrip()
@@ -152,8 +199,11 @@ class Footer(tk.Frame):
                 if len(file_path1) > 0:
                     self._send_callback()
             except (NameError, TypeError):
-                profile_load_error()
-
+                try:
+                    if len(dsu_file) > 0:
+                        self._send_callback()
+                except (NameError, TypeError):
+                    profile_load_error()
 
     def _draw(self):
         save_button = tk.Button(master=self, text="Send", width=20, command=self.send_click)
@@ -167,11 +217,12 @@ class Footer(tk.Frame):
 
 
 class NewContactDialog(tk.simpledialog.Dialog):
-    def __init__(self, root, title=None, user=None, pwd=None, server=None):
+    def __init__(self, root, title=None, user=None, pwd=None, server=None, files_pp=None):
         self.root = root
         self.server = server
         self.user = user
         self.pwd = pwd
+        self.file_p = files_pp
         super().__init__(root, title)
 
     def body(self, frame):
@@ -208,11 +259,11 @@ class NewContactDialog(tk.simpledialog.Dialog):
         self.pwd = self.password_entry.get()
         self.server = self.server_entry.get()
         assign = Profile()
-        assign.load_profile(file_path1)
+        assign.load_profile(self.file_p)
         assign.username = self.user
         assign.password = self.pwd
         assign.dsuserver = self.server
-        assign.save_profile(file_path1)
+        assign.save_profile(self.file_p)
 
 class MainApp(tk.Frame):
     def __init__(self, root):
@@ -223,24 +274,23 @@ class MainApp(tk.Frame):
         self.server = None
         self.file_path = None
         self.recipient = None
-        # You must implement this! You must configure and
-        # instantiate your DirectMessenger instance after this line.
-        #self.direct_messenger = ... continue!
-
-        # After all initialization is complete,
-        # call the _draw method to pack the widgets
-        # into the root frame
+        self.t = None
+        self.u = None
+        self.m = None
         self._draw()
-        #self.body.insert_contact("studentexw23") # adding one example student.
 
 
     def send_message(self):
         msg = self.body.get_text_entry()
         if len(msg) > 0:
-            ds_mess = DirectMessenger(self.server, self.username, self.password)
-            #p = SaveFilePath(self.file_path)
-            result = ds_mess.send(msg, self.recipient)
-            
+            SaveFilePath(self.file_path)
+            self.ds_mess = DirectMessenger(self.server, self.username, self.password)
+            self.ds_mess.send(msg, self.recipient)
+            assign = Profile()
+            assign.load_profile(self.file_path)
+            self.body.insert_user_message(msg, self.recipient, str(datetime.datetime.now()))
+            #self.ds_mess = DirectMessenger(self.server, self.username, self.password)
+            #self.ds_mess.retrieve_all()
             pass
         else:
             pass
@@ -269,22 +319,47 @@ class MainApp(tk.Frame):
                             er_msg = Label(new_wind, text="Usernames don't have whitespace.").pack(pady=10)
                             close = Button(new_wind, text="Ok", command=new_wind.destroy).pack(pady=10)
                         else:
-                            assign.add_contact(new_cont)
+                            assign.add_cont1(new_cont)
                             assign.save_profile(self.file_path)
                     except TypeError:
                         pass
             except (NameError, TypeError):
-                profile_load_error()
+                try:
+                    if len(self.file_path) > 0:
+                        assign.load_profile(self.file_path)
+                        try:
+                            if new_cont in assign.contacts:
+                                new_wind = Toplevel()
+                                new_wind.geometry("350x150+460+235")
+                                new_wind.title("Reminder!")
+                                er_msg = Label(new_wind, text="You have already added that contact.").pack(pady=10)
+                                close = Button(new_wind, text="Ok", command=new_wind.destroy).pack(pady=10)
+                            elif " " in new_cont:
+                                new_wind = Toplevel()
+                                new_wind.geometry("350x150+460+235")
+                                new_wind.title("Error!")
+                                er_msg = Label(new_wind, text="Usernames don't have whitespace.").pack(pady=10)
+                                close = Button(new_wind, text="Ok", command=new_wind.destroy).pack(pady=10)
+                            else:
+                                assign.add_cont1(new_cont)
+                                assign.save_profile(self.file_path)
+                        except TypeError:
+                            pass
+                except (NameError, TypeError):
+                    profile_load_error()
 
     def recipient_selected(self, recipient):
         '''
         Whatever is selected in the treeview should be passed here and made self.recipient. So when a message is sent the code knows that this is the person to send the message to.
         '''
         self.recipient = recipient
+        ds_client.save_path(self.file_path)
+        #self.ds_mess = DirectMessenger(self.server, self.username, self.password)
+        #self.ds_mess.retrieve_all()
 
     def configure_server(self):
         ud = NewContactDialog(self.root, "Configure Account",
-                              self.username, self.password, self.server)
+                              self.username, self.password, self.server, self.file_path)
         self.username = ud.user
         self.password = ud.pwd
         self.server = ud.server
@@ -296,10 +371,53 @@ class MainApp(tk.Frame):
         # You must implement this!
         pass
 
-    def check_new(self):
-        # You must implement this!
-        pass
+    def check_new_create(self):
+        try:
+            if self.username is not None:
+                assign = Profile()
+                assign.load_profile(self.file_path)
+                ds_client.save_path(self.file_path)
+                ds_messenger.save_p(self.file_path)
+                ds_mess = DirectMessenger(assign.dsuserver, assign.username, assign.password)
+                assign.new = []
+                assign.save_profile(self.file_path)
+                ds_mess.retrieve_new()
+                try:
+                    assign.load_profile(self.file_path)
+                    t = assign.new[0]
+                    m = assign.new[1]
+                    u = assign.new[2]
+                    if len(m) > 0:
+                        self.body.insert_contact_message(m, u, t)
+                except (NameError, TypeError, IndexError):
+                    pass
+                self.root.after(7000, self.check_new_create)
+        except NameError:
+            pass
 
+    def check_new(self):
+        try:
+            if self.username is not None:
+                assign = Profile()
+                assign.load_profile(self.file_path)
+                ds_client.save_path(self.file_path)
+                ds_messenger.save_p(self.file_path)
+                ds_mess = DirectMessenger(assign.dsuserver, assign.username, assign.password)
+                assign.new = []
+                assign.save_profile(self.file_path)
+                ds_mess.retrieve_new()
+                try:
+                    assign.load_profile(self.file_path)
+                    t = assign.new[0]
+                    m = assign.new[1]
+                    u = assign.new[2]
+                    if len(m) > 0:
+                        self.body.insert_contact_message(m, u, t)
+                except (NameError, TypeError, IndexError):
+                    pass
+                self.root.after(7000, self.check_new)
+        except NameError:
+            pass
 
     def _draw(self):
         # Build a menu and add it to the root frame.
@@ -337,8 +455,17 @@ class MainApp(tk.Frame):
         self.password = assign.password
         self.server = assign.dsuserver
         self.file_path = file_path1
-        ds_client.set_path(self.file_path)
-
+        ds_client.save_path(file_path1)
+        contact_lst = assign.contacts
+        ds_mess = DirectMessenger(assign.dsuserver, assign.username, assign.password)
+        ds_mess.retrieve_all()
+        new_list = []
+        self.body.del_conts()
+        for i in contact_lst:
+            new_list.append(i)
+        for new_cont in new_list:
+            self.body.insert_contact2(new_cont)
+        self.check_new()
 
     def close_code(self):
         main.destroy()
@@ -346,7 +473,6 @@ class MainApp(tk.Frame):
     def create_new_file(self):
         global dsu_file
         dsu_file = filedialog.asksaveasfilename(defaultextension=".dsu", title = "Create New DSU File", filetypes=(("DSU files", ".dsu"), ("All Files", "*.*")))
-        asks = ["Username:", "Password:", "Server IP:"]
         if len(dsu_file) > 1:
             main = tk.Tk()
             main.withdraw()
@@ -389,8 +515,10 @@ class MainApp(tk.Frame):
                 self.password = p
                 self.server = s
                 self.file_path = dsu_file
-                ds_client.set_path(self.file_path)
+                ds_client.save_path(self.file_path)
+                self.body.del_conts()
                 self.close_q()
+                self.check_new_create()
             else:
                 self.new_window()
         else:
