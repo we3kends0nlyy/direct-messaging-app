@@ -207,9 +207,6 @@ class Footer(tk.Frame):
 
     def _draw(self):
         save_button = tk.Button(master=self, text="Send", width=20, command=self.send_click)
-        # You must implement this.
-        # Here you must configure the button to bind its click to
-        # the send_click() function.
         save_button.pack(fill=tk.BOTH, side=tk.RIGHT, padx=5, pady=5)
 
         self.footer_label = tk.Label(master=self, text="Ready.")
