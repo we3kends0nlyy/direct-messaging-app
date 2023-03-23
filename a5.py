@@ -76,7 +76,6 @@ class Body(tk.Frame):
 
     def node_select(self, event):
         try:
-            print("HHH")
             index = int(self.posts_tree.selection()[0])
             entry = self._contacts[index]
             if self._select_callback is not None:
