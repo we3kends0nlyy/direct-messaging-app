@@ -17,15 +17,6 @@ import ds_client
 import datetime
 
 
-'''
-u = usr
-lst = []
-lst.append(t)
-lst.append(m)
-lst.append(u)
-return lst
-'''
-
 def os_error():
     new_wind = Toplevel()
     new_wind.geometry("250x125+460+235")
@@ -364,7 +355,6 @@ class MainApp(tk.Frame):
         # DirectMessenger instance after this line.
 
     def publish(self, message:str):
-        # You must implement this!
         pass
 
     def check_new_create(self):
