@@ -62,10 +62,10 @@ def req_mess(server, port, username, password, request):
         if len(y) > 0:
             mess = connect(server, port, username, password, request)
             if mess is not False:
-                if request is "new":
+                if request == "new":
                     returned = req_msgs_new(server, port, username, password, request, mess[1], mess[2], mess[0])
                     return returned
-                if request is "all":
+                if request == "all":
                     returned = req_msgs_all(server, port, username, password, request, mess[1], mess[2], mess[0])
                     return returned
             else:
@@ -251,7 +251,6 @@ def connect(server, port, username, password, message):
                 print("ERROR\nToken not received.")
                 print("Once a password is registered")
                 print("with a user, you must always\nuse that same password.")
-                a5.user_error()
                 return False
         except (ConnectionRefusedError, TimeoutError, socket.gaierror, TypeError, OSError) as e:
             a5.connection_error()
