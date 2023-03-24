@@ -409,19 +409,24 @@ class MainApp(tk.Frame):
                 try:
                     assign.load_profile(self.file_path)
                     t = assign.new[0]
+                    #x = t.split(".")
+                    time = float(t)
+                    time2 = datetime.datetime.fromtimestamp(time).strftime("%d/%m/%Y %I:%M %p")
+                    print("TIME: " + time2)
+                    #time1 = datetime.datetime.fromtimestamp(time)
                     m = assign.new[1]
                     u = assign.new[2]
                     if len(u) > 0:
                         try:
                             if u in assign.contacts:
                                 if u == self.recipient:
-                                    self.body.insert_contact_message(m, u, t)
+                                    self.body.insert_contact_message(m, u, time2)
                             else:
                                 self.body.insert_contact(u, self.file_path)
                                 assign.add_cont1(u)
                                 assign.save_profile(self.file_path)
                                 if u == self.recipient:
-                                    self.body.insert_contact_message(m, u, t)
+                                    self.body.insert_contact_message(m, u, time2)
                         except (NameError, TypeError):
                             pass
                         else:
