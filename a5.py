@@ -413,9 +413,6 @@ class MainApp(tk.Frame):
                     u = assign.new[2]
                     if len(u) > 0:
                         try:
-                            #if len(self.file_path) > 0:
-                               # assign.load_profile(self.file_path)
-                                #try:
                             if u in assign.contacts:
                                 if u == self.recipient:
                                     self.body.insert_contact_message(m, u, t)
@@ -425,8 +422,6 @@ class MainApp(tk.Frame):
                                 assign.save_profile(self.file_path)
                                 if u == self.recipient:
                                     self.body.insert_contact_message(m, u, t)
-                                #except TypeError:
-                                    #pass
                         except (NameError, TypeError):
                             pass
                         else:
