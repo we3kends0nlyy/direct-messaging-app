@@ -7,20 +7,19 @@ class TestClient(unittest.TestCase):
     def test_new_message(self):
         self.assertEqual(ds_client.send("168.235.86.101", 3021, "123", "123", "JAJAJAJAJAJA", "Jandhiiiitest1", "bio"), True)
         #self.assertEqual(ds_client.send_2("168.235.86.101", 3021, "julianapa", "1234", "new"), True)
-    '''
+
     def test_all(self):
         #self.assertEqual(ds_client.send_2("168.235.86.101", 3021, "julianapa", "1234", "all"), True)
         result = ds_client.send_2("168.235.86.101", 3021, "julianapa", "1234", "all")
         directmessage = DirectMessage()
         
         print(result)
-    '''
-    '''
+
     def test_invalid_request(self):
-        self.assertEqual(ds_client.send_2("168.235.86.101", 3021, "julianapa", "1234", "alll"), False)
+        self.assertEqual(ds_client.send_2("168.235.86.101", 3021, "julianapa", "1234asa", "alll"), False)
 
     def test_invalid_user(self):
-        self.assertEqual(ds_client.send_2("168.235.86.101", 3021, "julia", "1234", "alll"), False)
+        self.assertEqual(ds_client.send_2("168.235.86.101", 3021, "juli a", "1234", "alll"), False)
         
     def test_bio_only(self):
         self.assertEqual(ds_client.send("168.235.86.101", 3021, "JLKhjkjhSKJ", "123", None, None, "1jlakjds"), True)
@@ -51,7 +50,7 @@ class TestClient(unittest.TestCase):
         self.assertEqual(ds_client.send_2("168.235.86.101", 3021, "julianapa", "1234", ""), False)
 
     def test_new_false(self):
-        self.assertEqual(ds_client.send_2("168.235.86.101", 3021, "123", "123", "new"), False)
+        self.assertEqual(ds_client.send_2("168.235.86.101", 3021, "12 3", "123", "new"), False)
 
     def test_rec_white_only(self):
         self.assertEqual(ds_client.send("168.235.86.101", 3021, "123", "123", "hehe", "  ", "bio"), False)
@@ -79,12 +78,9 @@ class TestClient(unittest.TestCase):
 
     def test_notoken(self):
             self.assertEqual(ds_client.send("168.235.86.101", 3021, "123", "12312", "hehe", "julianapa", "bio"), False)
-
-    '''
     '''
     def test_connect_error(self):
             self.assertEqual(ds_client.send("168.235.86.1", 3021, "123", "12312", "hehe", "julianapa", "bio"), False)
-    '''
     '''
     def test_bio_empty_andmess(self):
         self.assertEqual(ds_client.send("168.235.86.101", 3021, "123", "123", None, None, "  "), False)
@@ -94,6 +90,6 @@ class TestClient(unittest.TestCase):
 
     def test_bio_userspace(self):
         self.assertEqual(ds_client.send("168.235.86.101", 3021, "12 3", "1  23", None, None, "bio"), False)
-    '''
+
 if __name__ == '__main__':
     unittest.main()

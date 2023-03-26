@@ -124,26 +124,28 @@ class Profile:
         self.password = password  # REQUIRED
         self.bio = ''            # OPTIONAL
         self._posts = []         # OPTIONAL
-        self.messages = []
+        self.messages = {'messages': []}
         self.contacts = []
         self.new = []
 
 
-    def add_new(self, data):
-        self.new.append(data)
-    
+    def add_new(self, msg):
+        self.new.append(msg)
+
+
     def add_cont1(self, contact):
         '''
         This adds contacts to the contact list so every time the user loads their profile, their contacts are automatically added into the tree view menu.
         '''
         self.contacts.append(contact)
-        
+
 
     def add_message(self, message):
         '''
         This message messages into the self.message list so that messages are stored locally.
         '''
-        self.messages.append(message)
+        self.messages['messages'].append(message)
+
 
     """
 
@@ -255,6 +257,4 @@ class Profile:
             except Exception as ex:
                 pass
                 #raise DsuProfileError(ex)
-        else:
-            pass
-            #raise DsuFileError()
+        ##raise DsuFileError()

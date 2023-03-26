@@ -7,7 +7,6 @@ import time
 import ds_protocol
 from ds_protocol import SaveFilePath
 import re
-import a5
 
 
 def save_path(p):
@@ -20,7 +19,6 @@ def user_pass_checker(username, password):
         if len(username) > 0 and len(password) > 0:
             match = re.search(r' ', username)
             if match:
-                a5.space_error()
                 print("ERROR\nUsername can't have whitespace.")
                 return False
             else:
@@ -77,30 +75,19 @@ def req_mess(server, port, username, password, request):
         return None
 
 
-def req_msgs_new(server, port, username, password, request, test, recv, x):
-    real_msg = {"token": x[0], "directmessage": request}
-    j = to_json(real_msg)
-    while True:
-        test.write(j + '\r\n')
-        test.flush()
-        srv_msg = recv.readline()[:-1]
-        sfp = SaveFilePath(path)
-        msg = ds_protocol.extract_json4(srv_msg)
-        return msg
-
-
 def req_msgs_all(server, port, username, password, request, test, recv, x):
     real_msg = {"token": x[0], "directmessage": request}
-    j = to_json(real_msg)
-    while True:
-        test.write(j + '\r\n')
-        test.flush()
-        srv_msg = recv.readline()[:-1]
-        sfp = SaveFilePath(path)
-        msg = ds_protocol.extract_json4(srv_msg)
-        user = ds_protocol.extract_user(srv_msg)
-        sfp.combine(msg, user)
-        return msg
+    if real_msg is None:
+        return False
+    else:
+        j = to_json(real_msg)
+        while True:
+            test.write(j + '\r\n')
+            test.flush()
+            srv_msg = recv.readline()[:-1]
+            msg = ds_protocol.extract_json4(srv_msg)
+            user = ds_protocol.extract_user(srv_msg)
+            return msg
 
 
 def send(server: str, port: int, username: str, password: str, message: str, recipient=None, bio: str = None):
@@ -165,23 +152,54 @@ def dir_mess(server, port, username, password, message, bio, recipient):
         return None
 
 
-def set_path(pa):
-    global f_path
-    f_path = pa
+def req_msgs_new(server, port, username, password, request, test, recv, x):
+    print("yo")
+    real_msg = {"token": x[0], "directmessage": request}
+    if real_msg is None:
+        return False
+    else:
+        j = to_json(real_msg)
+        while True:
+            test.write(j + '\r\n')
+            test.flush()
+            srv_msg = recv.readline()[:-1]
+            try:
+                sfp = SaveFilePath(path)
+                msg = ds_protocol.extract_json4(srv_msg)
+                user = ds_protocol.extract_user(srv_msg)
+                if len(msg) > 0 and len(user) > 0:
+                    sfp.add_to_messages_rec(msg)
+                return msg
+            except NameError:
+                msg = ds_protocol.extract_json4(srv_msg)
+                user = ds_protocol.extract_user(srv_msg)
+                if len(msg) > 0 and len(user) > 0:
+                    try:
+                        sfp.add_to_messages_rec(msg)
+                        #sfp.add_new_messages(srv_msg, user, msg)
+                    except:
+                        return msg
+                return msg
 
 
 def msgs(server, port, username, password, message, test, recv, x, recipient):
+    print("yay")
     real_msg = {"token": x[0], "directmessage": {"entry": message,"recipient": recipient, "timestamp": time.time()}}
     j = to_json(real_msg)
     while True:
         test.write(j + '\r\n')
         test.flush()
         srv_msg = recv.readline()[:-1]
-        #f_path = .ret_fp()
-        fp = SaveFilePath(path)
-        msg = ds_protocol.extract_json3(srv_msg)
-        msg_store = fp.extract_sent(real_msg)
-        break
+        try:
+            sfp = SaveFilePath(path)
+            #msg = ds_protocol.extract_json10(real_msg)
+            sfp.add_to_messages_sent(real_msg)
+            print("here")
+            return True
+            break
+        except NameError:
+            msg = ds_protocol.extract_json3(srv_msg)
+            return True
 
 def after_connect_join(server, port, test, recv, username, password, client):
     print(f"You are connected to server {server} on port {port}!")
@@ -253,7 +271,6 @@ def connect(server, port, username, password, message):
                 print("with a user, you must always\nuse that same password.")
                 return False
         except (ConnectionRefusedError, TimeoutError, socket.gaierror, TypeError, OSError) as e:
-            a5.connection_error()
             print("Connection error.")
             return False
 

@@ -5,9 +5,6 @@ from pathlib import Path
 import re
 import os
 import a5
-import a2
-import ui
-import checker
 from Profile import *
 
 

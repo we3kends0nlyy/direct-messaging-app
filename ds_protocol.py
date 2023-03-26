@@ -12,19 +12,55 @@ DataTuple4 = namedtuple('DataTuple', ['baz'])
 DataTuple5 = namedtuple('DataTuple', ['baz'])
 DataTuple6 = namedtuple('DataTuple', ['baz'])
 DataTuple7 = namedtuple('DataTuple', ['baz'])
+DataTuple9 = namedtuple('DataTuple', ['baz'])
 
 
 class SaveFilePath():
-    def __init__(self, file_p=None):
+    def __init__(self, file_p):
         self.file_path = file_p
+
+    def add_to_messages_rec(self, json_msg) -> DataTuple7:
+        #def add_to_messages(self, json_msg, user, msg) -> DataTuple7:
+        print(json_msg)
+        #print(user)
+        #print(msg)
+        print("MESSGAGE^^")
+        assign = Profile()
+        assign.load_profile(self.file_path)
+        new_list = []
+        new_list.append(json_msg)
+        if len(json_msg) > 0:
+            assign.add_message(new_list)
+            assign.save_profile(self.file_path)
+        else:
+            pass
+
+    def add_to_messages_sent(self, json_msg) -> DataTuple7:
+        baz = json_msg['directmessage']
+        #def add_to_messages(self, json_msg, user, msg) -> DataTuple7:
+        print(baz)
+        #print(user)
+        #print(msg)
+        print("MESSGAGE^^")
+        assign = Profile()
+        assign.load_profile(self.file_path)
+        new_list = []
+        new_list.append(baz)
+        new_list2 = []
+        new_list2.append(new_list)
+        if len(json_msg) > 0:
+            assign.add_message(new_list2)
+            assign.save_profile(self.file_path)
+        else:
+            pass
 
     def extract_sent(self, json_msg) -> DataTuple7:
         try:
             assign = Profile()
+            assign.load_profile(self.file_path)
             baz = json_msg['directmessage']
             outside_list2 = []
             outout = []
-            assign.load_profile(self.file_path)
             sent_msgs = {}
             outside_list2.append(sent_msgs)
             outout.append(outside_list2)
@@ -143,13 +179,7 @@ class SaveFilePath():
                 assign.add_message(outside_list)
                 assign.save_profile(self.file_path)
             elif type(assign.messages[1][0][0]) is dict:
-                new = []
-                y = assign.messages[0]
-                new.append(y)
-                z = []
-                z.append(outside_list)
-                new.append(z)
-                assign.messages = new
+                assign.add_message2(outside_list)
                 assign.save_profile(self.file_path)
             else:
                 assign.messages = assign.messages[1][0]
@@ -180,7 +210,6 @@ class SaveFilePath():
                     z = assign.messages
                     assign.add_message(outside_list)
                     assign.save_profile(self.file_path)
-
     
 def extract_json(json_msg: str) -> DataTuple:
     try:
@@ -233,22 +262,14 @@ def extract_json4(json_msg: str) -> DataTuple4:
     except json.JSONDecodeError:
         print("Json cannot be decoded.")
     return baz
-    '''
-def extract_time(json_msg: str) -> DataTuple6:
-    times = []
+
+
+def extract_json10(json_msg) -> DataTuple9:
     try:
         json_obj = json.loads(json_msg)
-        baz = json_obj['response']['messages']
+        print(json_obj)
+        print("^^^")
+        baz = json_obj['directmessage']
     except json.JSONDecodeError:
         print("Json cannot be decoded.")
     return baz
-    '''
-    '''
-    for i in # the index that has the sent and received as two lists, index 0 and index 1, check if 'from' is a key inside because if it is then that's the messages received and that's what ill replace with my newest messages received, this way the messages sent will remain the same and the messages received wont be duplicated like theyre being right now.
-    '''
-    '''
-    for j in user_list:
-        print(len(my_dict[j]))
-    print("TEST")
-    quit()
-    '''
