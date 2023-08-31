@@ -72,7 +72,7 @@ def req_mess(server, port, username, password, request):
             print("ERROR\nRequest can't be whitespace only.")
             return False
     except AttributeError:
-        return None
+        return False
 
 
 def req_msgs_all(server, port, username, password, request, test, recv, x):
@@ -93,17 +93,7 @@ def req_msgs_all(server, port, username, password, request, test, recv, x):
 def send(server: str, port: int, username: str, password: str, message: str, recipient=None, bio: str = None):
     message_error = mess_err_checker(server, port, username, password, message, bio, recipient)
     if message_error is None:
-        return_error = error_checker_bio(server, port, username, password, message, bio)
-        if return_error is None:
-            return_error2 = error_checker_post(server, port, username, password, message, bio)
-            if return_error2 is None:
-                return_error3 = error_checker_post_bio(server, port, username, password, message, bio)
-                return return_error3
-            else:
-                print("")
-                return return_error2
-        else:
-            return return_error
+        return message_error
     else:
         return message_error
 
@@ -153,7 +143,6 @@ def dir_mess(server, port, username, password, message, bio, recipient):
 
 
 def req_msgs_new(server, port, username, password, request, test, recv, x):
-    print("yo")
     real_msg = {"token": x[0], "directmessage": request}
     if real_msg is None:
         return False
@@ -176,14 +165,12 @@ def req_msgs_new(server, port, username, password, request, test, recv, x):
                 if len(msg) > 0 and len(user) > 0:
                     try:
                         sfp.add_to_messages_rec(msg)
-                        #sfp.add_new_messages(srv_msg, user, msg)
                     except:
                         return msg
                 return msg
 
 
 def msgs(server, port, username, password, message, test, recv, x, recipient):
-    print("yay")
     real_msg = {"token": x[0], "directmessage": {"entry": message,"recipient": recipient, "timestamp": time.time()}}
     j = to_json(real_msg)
     while True:
@@ -192,14 +179,13 @@ def msgs(server, port, username, password, message, test, recv, x, recipient):
         srv_msg = recv.readline()[:-1]
         try:
             sfp = SaveFilePath(path)
-            #msg = ds_protocol.extract_json10(real_msg)
             sfp.add_to_messages_sent(real_msg)
-            print("here")
             return True
             break
         except NameError:
             msg = ds_protocol.extract_json3(srv_msg)
             return True
+
 
 def after_connect_join(server, port, test, recv, username, password, client):
     print(f"You are connected to server {server} on port {port}!")
@@ -209,47 +195,6 @@ def after_connect_join(server, port, test, recv, username, password, client):
     test.flush()
     msg = recv.readline()[:-1]
     return msg
-
-
-def error_checker_bio(server, port, username, password, message, bio):
-    if message is None:
-        if bio is not None:
-            if type(bio) == str:
-                returned = bio_only(server, port, username, password, message, bio)
-                return returned
-            else:
-                print("ERROR\nBio must be a string.")
-                return False
-        else:
-            return False
-    else:
-        if type(message) != str:
-            print("ERROR\nMessage must be a string.")
-            return False
-        else:
-            pass
-
-
-def error_checker_post(server, port, username, password, message, bio):
-    if bio is not None:
-        pass
-    else:
-        returned3 = post_only(server, port, username, password, message, bio)
-        return returned3
-
-
-def error_checker_post_bio(server, port, username, password, message, bio):
-    try:
-        y = bio.strip(" ")
-        if len(y) > 0:
-            returned2 = post_and_bio(server, port, username, password, message, bio)
-            return returned2
-        else:
-            print("ERROR\nBio cant be whitespace only.")
-            return False
-    except AttributeError:
-        print("ERROR")
-        return False
 
 
 def connect(server, port, username, password, message):
@@ -273,63 +218,6 @@ def connect(server, port, username, password, message):
         except (ConnectionRefusedError, TimeoutError, socket.gaierror, TypeError, OSError) as e:
             print("Connection error.")
             return False
-
-
-def post_and_bio(server, port, username, password, message, bio):
-    rtrn_p_b = connect(server, port, username, password, message)
-    if rtrn_p_b is not False:
-        post(server, port, username, password, message, rtrn_p_b[1], rtrn_p_b[2], rtrn_p_b[0], bio)
-        bios(server, port, username, password, message, rtrn_p_b[1], rtrn_p_b[2], rtrn_p_b[0], bio)
-        return True
-    else:
-        return rtrn_p_b
-
-
-def post_only(server, port, username, password, message, bio):
-    rtrn_p = connect(server, port, username, password, message)
-    if rtrn_p is not False:
-        post(server, port, username, password, message, rtrn_p[1], rtrn_p[2], rtrn_p[0], bio)
-        return True
-    else:
-        return rtrn_p
-
-
-def bio_only(server, port, username, password, message, bio):
-    y = bio.strip(" ")
-    if len(y) > 0:
-        rtrn_b = connect(server, port, username, password, message)
-        if rtrn_b is not False:
-            bios(server, port, username, password, message, rtrn_b[1], rtrn_b[2], rtrn_b[0], bio)
-            return True
-        else:
-            return rtrn_b
-    else:
-        print("ERROR\nBio can't be whitespace only.")
-        return False
-
-
-def post(server, port, username, password, message, test, recv, x, bio):
-    post2 = {"token":x[0], "post": {"entry": message, "timestamp": "1603167689.3928561"}}
-    j = to_json(post2)
-    test.write(j + '\r\n')
-    test.flush()
-    srv_msg = recv.readline()[:-1]
-    msg = ds_protocol.extract_json2(srv_msg)
-    print(f"{msg[0]}!")
-    print("Your latest post was: ", message)
-
-
-def bios(server, port, username, password, message, test, recv, x, bio):
-    bio3 = {"token": x[0], "bio": {"entry": bio, "timestamp": time.time()}}
-    j = to_json(bio3)
-    while True:
-        test.write(j + '\r\n')
-        test.flush()
-        srv_msg = recv.readline()[:-1]
-        msg = ds_protocol.extract_json2(srv_msg)
-        print(f"{msg[0]}!")
-        print("Your new bio is : ", bio)
-        break
 
 
 def to_json(obj: dict) -> str:

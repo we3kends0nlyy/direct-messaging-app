@@ -22,6 +22,7 @@ class DirectMessage:
     def recpt(self, recipient):
         self.recipient = recipient
         return self.recipient
+
 class DirectMessenger:
     def __init__(self, dsuserver=None, username=None, password=None):
         self.dsuserver = dsuserver
@@ -62,35 +63,12 @@ class DirectMessenger:
                                 assign.add_new(lst[i])
                             assign.save_profile(file_p)
                             return msgs1
-                        except IndexError:
+                        except (IndexError, NameError):
                             return msgs1
                 except TypeError:
                     pass
         except (TypeError, IndexError):
-            msgs1 = []
-            try:
-                for i in range(len(dict_mess)):
-                    directmessage = DirectMessage()
-                    directmessage.timestamp = dict_mess[i]['timestamp']
-                    msgs1.append(directmessage.timestamp)
-                    directmessage.message = dict_mess[i]['message']
-                    msgs1.append(directmessage.message)
-                    directmessage.recipient = dict_mess[i]['from']
-                    msgs1.append(directmessage.recipient)
-                    lst = []
-                    try:
-                        for i in msgs1:
-                            lst.append(str(i))
-                        assign = Profile()
-                        assign.load_profile(file_p)
-                        for i in range(3):
-                            assign.add_new(lst[i])
-                        assign.save_profile(file_p)
-                        return msgs1
-                    except:
-                        return msgs1
-            except TypeError:
-                pass
+            pass
         else:
             return msgs1
 

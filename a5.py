@@ -20,6 +20,9 @@ import datetime
 
 
 def os_error():
+    '''
+    When the folder that the user chose isn't viable.
+    '''
     new_wind = Toplevel()
     new_wind.geometry("250x125+460+235")
     new_wind.title("Error!")
@@ -29,6 +32,9 @@ viable \nfolder to store your profile.").pack(pady=10)
 
 
 def os_error():
+    '''
+    When there's an invalid entry
+    '''
     new_wind = Toplevel()
     new_wind.geometry("250x125+460+235")
     new_wind.title("Error!")
@@ -37,21 +43,31 @@ def os_error():
 
 
 def connection_error():
+    '''
+    When there's a connection error
+    '''
     new_wind = Toplevel()
     new_wind.geometry("350x150+460+235")
     new_wind.title("Error!")
     er_msg = Label(new_wind, text="Connection\
-error. Invalid IP/Check you internet status.").pack(pady=10)
+error. Invalid IP/Check you internet\
+ status./Add a contact first").pack(pady=10)
 
     close = Button(new_wind, text="O\
 k", command=new_wind.destroy).pack(pady=10)
 
 
 def invalid_server():
+    '''
+    When the dsu server is invalid.
+    '''
     pass
 
 
 def user_error():
+    '''
+    When a username is taken already
+    '''
     new_wind = Toplevel()
     new_wind.geometry("250x150+460+235")
     new_wind.title("Error!")
@@ -61,6 +77,9 @@ taken already. \nPlease choose a new one.").pack(pady=10)
 
 
 def user_error2():
+    '''
+    When the user/password is taken already
+    '''
     new_wind = Toplevel()
     new_wind.geometry("375x188+460+235")
     new_wind.title("Error!")
@@ -72,6 +91,9 @@ exists.\nYour change was not saved.").pack(pady=10)
 
 
 def space_error():
+    '''
+    When the username/password is invalid
+    '''
     new_wind = Toplevel()
     new_wind.geometry("350x150+460+235")
     new_wind.title("Error!")
@@ -81,6 +103,9 @@ can't have spaces.").pack(pady=10)
 
 
 def profile_load_error():
+    '''
+    When the profile isn't loaded first
+    '''
     new_wind = Toplevel()
     new_wind.geometry("350x150+460+235")
     new_wind.title("Error!")
@@ -89,6 +114,9 @@ def profile_load_error():
 
 
 class Body(tk.Frame):
+    '''
+    The body class
+    '''
     def __init__(self, root, recipient_selected_callback=None):
         tk.Frame.__init__(self, root)
         self.root = root
@@ -97,6 +125,9 @@ class Body(tk.Frame):
         self._draw()
 
     def node_select(self, event):
+        '''
+        When a contact is selected in the treeview
+        '''
         try:
             index = int(self.posts_tree.selection()[0])
             entry = self._contacts[index]
@@ -106,21 +137,34 @@ class Body(tk.Frame):
             pass
 
     def del_conts(self):
+        '''
+        Delete everything from the treeview
+        '''
         self.posts_tree.delete(*self.posts_tree.get_children())
         for x in self._contacts:
             self._contacts.remove(x)
 
     def insert_contact2(self, contact: str):
+        '''
+        Inserts the contact into the tree another time
+        '''
         self._contacts.append(contact)
         id = len(self._contacts) - 1
         self._insert_contact_tree(id, contact)
 
     def _insert_contact_tree(self, id, contact: str):
+        '''
+        Inserts the contact into the treeview
+        '''
+    
         if len(contact) > 25:
             entry = contact[:24] + "..."
         id = self.posts_tree.insert('', id, id, text=contact)
 
     def insert_contact(self, contact: str, path):
+        '''
+        Inserts the contact
+        '''
         if contact is None or len(contact) == 0:
             return False
         else:
@@ -154,16 +198,28 @@ class Body(tk.Frame):
 + usr + '\n' +  'Message: ' + message + '\n', 'entry-left')
 
     def get_text_entry(self) -> str:
+        '''
+        Gets the message in the message box
+        '''
         return self.message_editor.get('1.0', 'end').rstrip()
 
     def set_text_entry(self, text: str):
+        '''
+        Clears the message send box
+        '''
         self.message_editor.delete(1.0, tk.END)
 
     def clear_box(self):
+        '''
+        Clears the message box
+        '''
         self.entry_editor.delete(1.0, tk.END)
 
     def _draw(self):
-        posts_frame = tk.Frame(master=self, width=250)
+        '''
+        Puts everything onto the screen
+        '''
+        posts_frame = tk.Frame(master=self, width=250, bg="purple")
         posts_frame.pack(fill=tk.BOTH, side=tk.LEFT)
 
         self.posts_tree = ttk.Treeview(posts_frame)
@@ -171,7 +227,7 @@ class Body(tk.Frame):
         self.posts_tree.pack(fill=tk.BOTH, side=tk.TOP,
                              expand=True, padx=5, pady=5)
 
-        entry_frame = tk.Frame(master=self, bg="")
+        entry_frame = tk.Frame(master=self, bg="yellow")
         entry_frame.pack(fill=tk.BOTH, side=tk.TOP, expand=True)
 
         editor_frame = tk.Frame(master=entry_frame, bg="red")
@@ -201,6 +257,9 @@ class Body(tk.Frame):
 
 
 class Footer(tk.Frame):
+    '''
+    The footer class
+    '''
     def __init__(self, root, send_callback=None):
         tk.Frame.__init__(self, root)
         self.root = root
@@ -208,6 +267,9 @@ class Footer(tk.Frame):
         self._draw()
 
     def send_click(self):
+        '''
+        Triggered when the send button is called
+        '''
         if self._send_callback is not None:
             try:
                 if len(file_path1) > 0:
@@ -220,6 +282,9 @@ class Footer(tk.Frame):
                     profile_load_error()
 
     def _draw(self):
+        '''
+        Puts the things on the screen
+        '''
         save_button = tk.Button(master=self, text="Sen\
 d", width=20, command=self.send_click)
         save_button.pack(fill=tk.BOTH, side=tk.RIGHT, padx=5, pady=5)
@@ -229,7 +294,13 @@ d", width=20, command=self.send_click)
 
 
 class NewContactDialog(tk.simpledialog.Dialog):
+    '''
+    This is used when the user is edited.
+    '''
     def __init__(self, root, title=None, user=None, pwd=None, server=None, files_pp=None):
+        '''
+        Sets class variables
+        '''
         self.root = root
         self.server = server
         self.user = user
@@ -238,6 +309,9 @@ class NewContactDialog(tk.simpledialog.Dialog):
         super().__init__(root, title)
 
     def body(self, frame):
+        '''
+        Sets the placement of items
+        '''
         self.server_label = tk.Label(frame, width=30, text="DS Server Address")
         self.server_label.pack()
         self.server_entry = tk.Entry(frame, width=30)
@@ -259,6 +333,9 @@ class NewContactDialog(tk.simpledialog.Dialog):
         self.password_entry.pack()
 
     def apply(self):
+        '''
+        Applies all the changes to user info.
+        '''
         self.user = self.username_entry.get()
         self.pwd = self.password_entry.get()
         self.server = self.server_entry.get()
@@ -271,7 +348,13 @@ class NewContactDialog(tk.simpledialog.Dialog):
 
 
 class MainApp(tk.Frame):
+    '''
+    This class is the main class
+    '''
     def __init__(self, root):
+        '''
+        Sets all the class variables
+        '''
         tk.Frame.__init__(self, root)
         self.root = root
         self.username = None
@@ -286,6 +369,9 @@ class MainApp(tk.Frame):
         self._draw()
 
     def send_message(self):
+        '''
+        Sends the message
+        '''
         msg = self.body.get_text_entry()
         self.body.set_text_entry(msg)
         if len(msg) > 0:
@@ -305,6 +391,9 @@ self.recipient, str(datetime.datetime.now()))
             pass
 
     def add_contact(self):
+        '''
+        Adds new contacts
+        '''
         new_cont = tkinter.simpledialog.askstring("New\
 Contact", "Enter a contact.")
         self.body.insert_contact(new_cont, self.file_path)
@@ -375,16 +464,16 @@ k", command=new_wind.destroy).pack(pady=10)
         person to send the message to.
         '''
         if recipient != self.recipient:
+            self.body.set_text_entry("hi")
             self.body.clear_box()
             assign = Profile()
             assign.load_profile(self.file_path)
             x = assign.messages
             self.recipient = recipient
             ds_client.save_path(self.file_path)
-            #try:
             for i in range(len(x['messages'])):
                     try:
-                        if x['messages'][i][0][0]['recipient'] == self.recipient:
+                        if x['messages'][i][0][0]['recipient']== self.recipient:
                             msg = x['messages'][i][0][0]['entry']
                             user = x['messages'][i][0][0]['recipient']
                             time = x['messages'][i][0][0]['timestamp']
@@ -398,30 +487,14 @@ k", command=new_wind.destroy).pack(pady=10)
                             user = x['messages'][i][0][0]['from']
                             time = x['messages'][i][0][0]['timestamp']
                             timespit = time.split(".")
-                            time2 = datetime.datetime.fromtimestamp(int(timespit[0])).strftime("%d/%m/%Y %I:%M %p")
+                            time2 = datetime.datetime.fromtimestamp(int(timespit[0])).strftime("%d/%\
+m/%Y %I:%M %p")
                             self.body.insert_contact_message(msg, user, time2)
-            '''
-            except:
-                try:
-                    if x['messages'][0][0][0]['from'] == self.recipient:
-                        for i in range(len(x['messages'])):
-                                try:
-                                    msg = x['messages'][i][0][0]['entry']
-                                    user = x['messages'][i][0][0]['recipient']
-                                    time = x['messages'][i][0][0]['timestamp']
-                                    time2 = datetime.datetime.fromtimestamp(time).strftime("%d/%m/%Y %I:%M %p")
-                                    self.body.insert_user_message(msg, user, time2)
-                                except:
-                                    msg = x['messages'][i][0][0]['message']
-                                    user = x['messages'][i][0][0]['from']
-                                    time = x['messages'][i][0][0]['timestamp']
-                                    timespit = time.split(".")
-                                    time2 = datetime.datetime.fromtimestamp(int(timespit[0])).strftime("%d/%m/%Y %I:%M %p")
-                                    self.body.insert_contact_message(msg, user, time2)
-                except:
-                    pass
-            '''
+
     def configure_server(self):
+        '''
+        Edits the user info
+        '''
         if self.file_path is not None:
             ud = NewContactDialog(self.root, "Configure Account",
                                   self.username, self.password, self.server, self.file_path)
@@ -437,10 +510,6 @@ k", command=new_wind.destroy).pack(pady=10)
                 self.check_new()
         else:
             pass
-
-    def publish(self, message:str):
-        pass
-
 
     def check_new(self):
         '''
@@ -474,58 +543,67 @@ k", command=new_wind.destroy).pack(pady=10)
             pass
 
     def check_pt2(self):
+        '''
+        The second part of the check function
+        '''
+        try:
+            assign = Profile()
+            ds_mess = ds_messenger.DirectMessenger(self.server, self.username, self.password)
+            ds_messenger.save_p(self.file_path)
+            ds_mess.retrieve_new()
+            assign.load_profile(self.file_path)
+            t_1 = assign.new[0]
+            time_1 = float(t_1)
+            time2_1 = datetime.datetime.fromtimestamp(time_1).strftime("%d/%m/%Y %I:%M %p")
+            m_1 = assign.new[1]
+            u_1 = assign.new[2]
+            if len(u_1) > 0:
                 try:
-                    assign = Profile()
-                    ds_mess = ds_messenger.DirectMessenger(self.server, self.username, self.password)
-                    ds_messenger.save_p(self.file_path)
-                    ds_mess.retrieve_new()
-                    assign.load_profile(self.file_path)
-                    t = assign.new[0]
-                    time = float(t)
-                    time2 = datetime.datetime.fromtimestamp(time).strftime("%d/%m/%Y %I:%M %p")
-                    m = assign.new[1]
-                    u = assign.new[2]
-                    if len(u) > 0:
-                        try:
-                            if u in assign.contacts:
-                                if u == self.recipient:
-                                    self.body.insert_contact_message(m, u, time2)
-                            else:
-                                self.body.insert_contact(u, self.file_path)
-                                assign.add_cont1(u)
-                                assign.save_profile(self.file_path)
-                                if u == self.recipient:
-                                    self.body.insert_contact_message(m, u, time2)
-                        except (NameError, TypeError):
-                            pass
-                        else:
-                            new_wind = Toplevel()
-                            new_wind.geometry("250x125+460+235")
-                            new_wind.title("Notification!")
-                            er_msg = Label(new_wind, text=f"{u} just sent you a message!").pack(pady=10)
-                            close = Button(new_wind, text="Ok", command=new_wind.destroy).pack(pady=10)
-                            self.body.insert_contact(u, self.file_path)
-                except (NameError, TypeError, IndexError) as e:
-                    print(e)
+                    if u_1 in assign.contacts:
+                        if u_1 == self.recipient:
+                            self.body.insert_contact_message(m_1, u_1, time2_1)
+                    else:
+                        self.body.insert_contact(u_1, self.file_path)
+                        assign.add_cont1(u_1)
+                        assign.save_profile(self.file_path)
+                        if u_1 == self.recipient:
+                            self.body.insert_contact_message(m_1, u_1, time2_1)
+                except (NameError, TypeError):
                     pass
-                self.after_meth = self.root.after(2000, self.check_new)
-
+                else:
+                    new_wind = Toplevel()
+                    new_wind.geometry("250x125+460+235")
+                    new_wind.title("Notification!")
+                    Label(new_wind, text=f"{u_1} just\
+ sent you a message!").pack(pady=10)
+                    Button(new_wind, text="Ok", command=new_wind.destroy).pack(pady=10)
+                    self.body.insert_contact(u, self.file_path)
+        except (NameError, TypeError, IndexError):
+            pass
+        self.after_meth = self.root.after(2000, self.check_new)
 
     def _draw(self):
+        '''
+        Draws everything into the gui
+        '''
         menu_bar = tk.Menu(self.root)
         self.root['menu'] = menu_bar
         menu_file = tk.Menu(menu_bar)
 
-        menu_bar.add_cascade(menu=menu_file, label='File')
-        menu_file.add_command(label='New', command=self.create_new_file)
-        menu_file.add_command(label='Open...', command=self.open_filee)
-        menu_file.add_command(label='Close', command=self.close_code)
+        menu_bar.add_cascade(menu=menu_file, label='Create New/Open')
+        menu_file.add_command(label='Create a New\
+Profile', command=self.create_new_file)
+        menu_file.add_command(label='Open an Ex\
+isting Profile', command=self.open_filee)
+        menu_file.add_command(label='Close the GUI', command=self.close_code)
 
         settings_file = tk.Menu(menu_bar)
-        menu_bar.add_cascade(menu=settings_file, label='Settings')
-        settings_file.add_command(label='Add Contact',
+        menu_bar.add_cascade(menu=settings_file, label='Add\
+Contact/Edit Profile')
+        settings_file.add_command(label='Add\
+Contact',
                                   command=self.add_contact)
-        settings_file.add_command(label='Configure DS Server',
+        settings_file.add_command(label='Edit your profile.',
                                   command=self.configure_server)
 
         self.body = Body(self.root,
@@ -535,6 +613,9 @@ k", command=new_wind.destroy).pack(pady=10)
         self.footer.pack(fill=tk.BOTH, side=tk.BOTTOM)
 
     def open_filee(self):
+        '''
+        Triggered when a file is selected to open.
+        '''
         global file_path1
         file_path1 = filedialog.askopenfilename(initialdir="/", title="Select a File", filetypes=(("D\
 SU files", ".dsu"), ("allfiles", "*.*")))
@@ -553,22 +634,22 @@ SU files", ".dsu"), ("allfiles", "*.*")))
             for new_cont in new_list:
                 self.body.insert_contact2(new_cont)
             self.body.clear_box()
-            x = ds_client.connect("168.235.86.101", 3021,\
+            x_x = ds_client.connect("168.235.86.101", 3021,\
 self.username, self.password, "Testing account...")
-            if x is False:
+            if x_x is False:
                 pass
             else:
-                x = ds_client.connect(self.server, 3021,\
+                x_x = ds_client.connect(self.server, 3021,\
 self.username, self.password, "Testing account...")
-                if x is False:
+                if x_x is False:
                     pass
                 else:
                     ds_client.save_path(self.file_path)
                     ds_mess = ds_messenger.DirectMessenger(assign.dsuserver, assign.username, assign.password)
                     ds_mess.retrieve_all()
-                    x = ds_client.connect("168.235.86.10\
+                    x_x = ds_client.connect("168.235.86.10\
 1", 3021, self.username, self.password, "Testing account...")
-                    if x is False:
+                    if x_x is False:
                         user_error2()
                     else:
                         self.check_new()
@@ -576,9 +657,15 @@ self.username, self.password, "Testing account...")
             pass
 
     def close_code(self):
+        '''
+        Closes the gui when close button is used.
+        '''
         main.destroy()
 
     def create_new_file(self):
+        '''
+        Creates  new file and assigns the info to the class variables
+        '''
         global dsu_file
         dsu_file = filedialog.asksaveasfilename(defaultextension=".d\
 su", title="Create New DSU File", filetypes=(("DSU\
@@ -612,26 +699,29 @@ files", ".dsu"), ("All Files", "*.*")))
             pass
 
     def save_data(self):
-        u = input_user.get()
-        p = input_password.get()
-        s = input_server.get()
-        match = re.search(r' ', u)
-        if not match and len(u) > 0:
-            match = re.search(r' ', p)
-            if not match and len(p) > 0:
-                x = ds_client.connect(s, 3021, u, p, "Testing account...")
-                if x is False:
+        '''
+        Saves the data from the open file
+        '''
+        u_1 = input_user.get()
+        p_1 = input_password.get()
+        s_1 = input_server.get()
+        match = re.search(r' ', u_1)
+        if not match and len(u_1) > 0:
+            match = re.search(r' ', p_1)
+            if not match and len(p_1) > 0:
+                x_x = ds_client.connect(s_1, 3021, u_1, p_1, "Testing account...")
+                if x_x is False:
                     invalid_server()
                 else:
-                    x = ds_client.connect("168.235.\
-86.101", 3021, u, p, "Testing account...")
-                    if x is False:
+                    x_x = ds_client.connect("168.235.\
+86.101", 3021, u_1, p_1, "Testing account...")
+                    if x_x is False:
                         user_error()
                     else:
-                        user.user_asker(dsu_file, u, p, s)
-                        self.username = u
-                        self.password = p
-                        self.server = s
+                        user.user_asker(dsu_file, u_1, p_1, s_1)
+                        self.username = u_1
+                        self.password = p_1
+                        self.server = s_1
                         self.file_path = dsu_file
                         ds_client.save_path(self.file_path)
                         self.body.clear_box()
@@ -644,6 +734,9 @@ files", ".dsu"), ("All Files", "*.*")))
             self.new_window()
 
     def new_window(self):
+        '''
+        Creates a new window
+        '''
         new_wind = Toplevel()
         new_wind.geometry("350x150+460+235")
         new_wind.title("Error")
@@ -653,6 +746,9 @@ ord must not contain whitespace.").pack(pady=10)
 k", command=new_wind.destroy).pack(pady=10)
 
     def close_q(self):
+        '''
+        Closes the window
+        '''
         root2.destroy()
 
 
@@ -661,11 +757,15 @@ if __name__ == "__main__":
 
     style = ttk.Style(main)
     style.theme_use("clam")
-    style.configure("Treeview", background="bl\
-ack", fieldbackground="black", foreground="orange")
-    main.title("ICS 32 Distributed Social Messenger")
-    main.geometry("500x300+188+60")
-
+    style.configure("Treeview", background="black", fieldbackground="white", foreground="white")
+    main.title("Distributed Social Messenger")
+    main.geometry("550x700+250+60")
+    
+    new_wind = Toplevel()
+    new_wind.geometry("450x175+460+235")
+    new_wind.title("Welcome!!")
+    ER_MSG = Label(new_wind, text="Hello there! Use the menu buttons\n at the top of your screen to create\n a new profile or open an existing one. Use the box\n at the bottom of the GUI to type in your messages,\n then send. The box on the left holds all your contacts, and \nthe big box in the middle is where all your messages are displayed!\n Have fun messaging! xD").pack(pady=10)
+    CLOSE = Button(new_wind, text="Ok", command=new_wind.destroy).pack(pady=2)
     main.option_add('*tearOff', False)
 
     app = MainApp(main)

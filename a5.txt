@@ -1,0 +1,326 @@
+to test if my message sends in part 1, create a new user and send a message to that username, then request to show the messages sent to that username and the message i sent to that username should show up if everything worked.
+also, in regards to the send function, it's look that i changed the parameters of the send function from a3 because it won't affect the autograder for a5. the a5 autograder will use the send function within the new class in part 2 of a5 which i have yet to do but thats my next step after testing that i can successfully send a direct message to another user. to do the request for the messages, call it after the join is done with the username and password. so to test it: self.assertEqual(ds_client.send("168.235.86.101", 3021, "user_sent_to", "123", " ", " "), True),
+so connect, then join, then request with the token i get from join, the server will know who im trying to get messages for because of the username and password pre established with join. 
+
+YOU GOT THIS!!!
+
+next step PART 2>>>>>
+also organize my ds_client module cuz its disorganized and messy as fuck
+
+to retrieve old messages that were sent to a user, all i need is the username and password of that user for the join protocol to then use "new" or "all". so i dont need to ask the user to load their profile every time in the gui to load previous messages in a user. 
+pytest --cov=ds_client --cov-report=html
+
+work on a5 then...
+confirm ideas from practice final 1,
+confirm curve sketching ideas
+then confirm ideas from optimization part 2 vid.
+
+any code that i dont use, i can delete it or else i must write a unit test for it
+
+
+Return true when code works and false when code excepts an error. 
+Only keep code that's used because all code must have 100% yes 100% test coverage. 
+O, C, and E command must all be in gui. No code should run through the terminal. 
+When a5.py is run, it should open straight to the guy and nowhere else.
+All errors should be displayed in the gui.
+Have a button where the user can create a new profile. Ask for the dsuserver number, username, and password for this.
+Have a button to load profile. Either have the user enter their file path or create a button that when pressed it opens the finder on mac or the thing that has all files on windows idk what it's called lol. This should all be done within gui.
+This is profs recommendation but not needed idk: Move all code from ds_client into ds_message so it's easier to write tests for it.
+
+
+
+
+for the saving messages from people, do what roy said with the list inside of dictionaries(with the key being the persons username that sent those messages) inside of a list. so the list inside of each key has all the messages sent from the user who's name is the key.
+
+so what's the goal right now, create a list with dictionaries inside which contain lists of all messages sent for each user. 
+THERE WE GO YEAAAAHH EEE YEEAAAAHHHH
+user = ["Julian", "jose", "joe", "Julian", "Jose", "Julian", "Julia"]
+msg = ["1", "2", "3", "4", "5", "6", "7"]
+my_dict = {}
+for i in range(len(msg)):
+    #for u in user:
+    if user[i] in my_dict:
+        my_dict[user[i]].append(msg[i])
+    else:
+        msg_list = []
+        msg_list.append(msg[i])
+        my_dict[user[i]] = msg_list
+print(my_dict)
+
+NEXT STEP ><><><><>
+next step, get my "all" command to print the right things using my new dictionary thing so it prints all messages out for each user
+
+
+configure ds is for changing username, password, or dsu server in a profile.
+if the user changes username, it creates a new profile.
+send_message uses a callback function
+from markwin><>i have a like a couple dialog boxes as classes as well where i just used entry.get()
+inside to get user input
+
+
+like when they click New
+it opens the file explorer
+and has them enter a name for a dsu file
+then when that's done, it opens a log in page
+for them to enter a username, pass, bio, and IP address
+
+filedialog.savefileas
+
+well that's how my create looks like
+my open doesn't allow to enter a filename, my create does, and it creates a new file that way
+then prompts a login page
+but it's rlly up to ou
+
+why is everything in the starter code = None, are we supposed to change this?
+Hide — Today at 11:14 PM
+Basically
+
+we3kendsonly_0 — Today at 11:20 PM
+im still kinda confused on the finder thing, so there's a way for the user to double click on the dsu profile and their username, password, and dsu profile is automatically loaded in right? just making sure before i do research lol
+
+Renko — Today at 11:21 PM
+yep
+there is a way for that
+
+ok so there is a method where the user can double click on a dsu file and all their info and file path can be stored and saved/loaded in so the user can continue with that info loaded into the gui.
+
+talking abt opening a file with the finder thing...
+are u planning on creating a new function for this?
+Renko — Today at 11:29 PM
+yeah i already did
+i just need to call the method to save the file path rather than just open the file
+
+also what is check_new
+what is the function of it supposed to be
+adibak — Today at 11:30 PM
+Check new?
+Renko — Today at 11:30 PM
+oh
+anna. — Today at 11:30 PM
+its right below publish
+Renko — Today at 11:30 PM
+cause your supposed to load the new messages as they come
+like live
+
+you can save however you like
+you can save after each new message
+or just before your program terminates
+I think the former is more secure
+
+so you should store all messages that you grab into ur profile and just be able to list them in the gui without intenrer
+
+Renko — Today at 6:51 PM
+we need 3 lists.
+so one called messages or smt
+which stores your received with the sender, message, and timestamp
+then one called friends
+then send ig
+*sent
+Which stores the message, person u sent to, and time
+
+i'd recomment making two new attributes in profile
+one for your own messages
+and another for ones sent to you
+adibak — Today at 8:30 PM
+right, i made like 3 (one for messages sent, another for received, another for friends)
+
+adibak — Today at 8:30 PM
+all empty lists obv
+noiceee
+so do i just
+append stuff to them
+inside save_profile
+or shd a new func be made
+markwin — Today at 8:31 PM
+yeah
+append
+so i would recommend
+turning the dm obj into a dictionary
+and then append
+then save after youve appended all
+
+markwin — Today at 12:11 AM
+i ended up using retrieve_new with the .after method to load new messages into the message log
+
+markwin — Today at 12:36 AM
+but i would recommend adding another instance of .after inside the check_new method in the MainApp class
+
+markwin — Today at 12:37 AM
+but if you put it inside the check_new method and have it call itself again in there, then it would recursively refresh your program
+
+markwin — Today at 12:39 AM
+to store messages><>
+each dictionary had this format
+{time: [msg, recipient]}
+we3kendsonly_0 — Today at 12:40 AM
+smart smart
+markwin — Today at 12:40 AM
+i would add both messages that i sent and messages that i received
+and sort using sorted and lambda
+the messages i sent a received have to be in one list.
+
+markwin — Today at 12:44 AM
+put all messages that you sent to the person and messages you received from that person in to a list
+and sort it
+by the timestamp
+
+markwin — Today at 12:50 AM
+when the list is sorted you should just be able to iterate straight through the list and just have like if statements that checks if he dictionary you're on is of your message or of the recipient's
+
+markwin — Today at 12:51 AM
+yeah
+you can check what recipient you're on based on what is set on the self.recipient variable
+it should change everytime you click a different name in the treeview on the left hand side
+
+markwin — Today at 12:56 AM
+yes, the user
+you
+i would make
+a new attribute as well
+one to store your current profile
+one to store the filepath to that profile as well
+
+calling node_select when a node is touched in the gui(when a user is clicked on in the top left) will trigger the recipient_selected method which sets the self.recipient variable to the recipient automatically, use the self.recipient when iterating through the list with dictionaries inside to display the messages sent and received from a user.
+
+markwin — Today at 3:34 AM
+self.root.after(1000, self.check_new)
+inside check_new
+
+
+markwin — Today at 4:35 AM
+including mine if i have any stored
+i used the .after method in combination with check_new 
+to refresh my screen
+and whenever it refreshes
+it auto inserts any new messages
+
+NEXT STEP>>>> connect the my_dict dictionary with all posts received inside of it to the Profile module to store the messages received locally in the dsu profile of the user. 
+
+
+NEXT GOAL><><
+find the place where im going to get my messages sent to convert into the dictionary type thing i have for my messages received. maybe use the combine function, maybe make new function. But my messages will be sorted by the user that I sent them to and eventually will be appended into messages. 
+to separate which data inside of the messages attribute in the dsu profile, put either a key in front of the list, for received put 'received' and for sent put 'sent'. this way when i display the messages onto the gui screen i can iterate through user_list and separate with 'received' and 'sent' within the same user so the two can be separated onto the left and right of the screen like they e
+
+create a dictionary just like i did for messages received where the posts sent are organized by the user sent to. Then append this dictionary 
+have two lists inside of the messages attribute list in the dsu profile, the first list has all the messages received the second has all messages sent, this makes it easier to iterate through them when i display them on the gui screen.
+
+markwin - Today at 7:01 PM
+get the file path to the new DSU file using the file dialog, validate login, store the filepath and all user information into main app attributes, create a ds messenger object and store that as well, and clear all data off your screen.
+
+
+
+NEXT STEP:::><><> uuuhhmmmmmmm so i just made it so that all messages received are in their own list, so now update the messages sent so that theyre in theyre own list within the messages attribute in the dsu profile file. go to my extract_sent function in ds_protocol and pick up from their using the key to get all the info for each post that is sent and do something similar to what i do with messages received, create that big list with messages sent, do the thing where i check if there is already a key for certain user inside of the dictionary, if there is, just append to that existing key, if there isn't, create a new key and put the post that i sent in there. >>(make sure that when i do add_message, the data that's already in the messages attribute stays and doesn't get duplicated)
+
+>>then reset the message attribute every time to an empty list and add with outside_list list and the list with everything from the messages sent big list. so there will be two big lists in the messages attribute by the end, one for messages received and one for messages sent. YOU GOT THIS!!!!
+
+
+
+NEXT STEPPPP>>>> continue setting up my received and sent functions with the if statements to be exact with the specifications that i encounter and can happen. be methodical about it, remember the last thing that happened with the adding messages that i sent where set y equal to assign.messages and appended the message to the specific key in y[0][0][0][baz['recipient']] and then all i needed to do was assign.messages = y. this will be helpful for the other cases that i encounter.
+
+
+NEXT STEEEEPP><><><>i just made the create_new_file thing and it pops up and creates the file, so the next step is getting the dialog box to pop up when the create file pops up. use the info from the dialog box to create the dsu file with the dsu profile and the user specified info inside of it because rn the create_new_file creates an empty dsu file. maybe i store the file path? then delete it, then create a new one with the user specified data? or maybe theres a way to pop up the dialog for the user to specify data then get that into the dsu file before its made. my gut is telling me to save the file path with the dsu file name at the end, delete that one, then create a new file with the user specified info collected from the text box. but there probably is a better way so think abt this. YOU GOT IT!!!
+
+
+NEXT STEPPP>><<>>### get brainstorming on the next step--let's start with being able to send a message with the send button after i've added a contact and the file path is saved with Open or Create. How ill get the send to work is by using the file path to get the username and password, then assigning the data to variables, then using those variables in the place where I instantiate the DirectMessenger object and call the send function in my test code. do something similar but with the loaded data that i get from the dsu profile that's loaded. connect these things and successfully send a message with the send button. 
+>>>
+THEN i can focus on other things like getting the info from the profile to show up in the chat box in the middle when a user logs in.Some things to set up would be add contact. Getting the file path to stay loaded when the user does Open or New. When the user does add contact, get it to save in the tree view on the left but dont save it in the dsu profile until a message is sent or received from that user. When a username is added with add contact, add the username to a list of usernames, maybe that's something already built into the code.
+
+when user changes username, the messages received that are stored locally should continue to be displayed in the main chat box area. when the use changes username, store the messages sent and received by that new username in the same dsu file as the previous username. just keep adding onto it. its actually not that complicated. as long as the new username is saved and updated in the profile, the retrieve all, retrieve new, and send methods will all be ran with the new username. and i wouldn't have to store the messages received and sent by this new username somewhere else because its from the same user technically. And since the username is updated in the dsu file, there's no way that messages received to the old username would come through because retrieve all is under whatever username is currently in the file. so when i change my username, ill keep all the same contacts. but when i send something under the new username to a contact i had saved on my previous account, the user that i send a message to will get that message as a new contact. Since we didnt build instagram lol so we dont have the ability to change our username and have everyone in the server see that change. so the user i sent a message to will get a new contact. but when they send a message back to me with my new username, their messages will go under the same contact  so we good.
+
+make it so that when my code does the refresh every second thing it checks if the contact that sent the message is in my contact list. if not, then call the insert_contact method and add it.
+
+
+NEXT STEP:>>store a list of contacts somewhere so that when a user logs into their account, the contacts automatically show up in the tree view. Integrate all messages sent and received to show up in the chat box when a user is logged in and clicks on a contact in the tree view. Get the configure account edit thing to work. YOU GOT THIS!!
+
+
+REAL NEXT STEP!!!! ok julian, we're so close to the finish line i feel it. treat today like a5 is due today let's have a sense of urgency! every time a user is signed in and they add a contact, add that contact to a list and store it in the dsu file.<<DONE that way every time a user logs in, my code iterates through that user list and display all the names in the tree view right away. then make it so that my gui loads all the messages sent and received from the user that's clicked on into the chat box. after these two main important functionalities are added, THEN i can start adding other shit. like a delete contact button, a status bar that displays the username of whoever is signed in, and little extra things that would just be cool to add and separate my gui from other guis. but for now the goal is two integrate the first two big things i was talking abt, the contact list attribute in the dsu file so that when a user loads in they automatically have their contents loaded in, AND when the user clicks on a contact in the tree view, all their messages sent and received from that user are displayed in the main box area. LETS GOOOOOOOO
+
+last thing, making a new profile attribute for contacts and testing adding in some added contacts to a dsu file profile.
+find a way to return errors back to the gui, right now its OSError when the user chooses to save to the main computer instead of a folder. this error should be returned all the way back to the gui where it was originally called and displayed on the screen if its an error somehow.
+ok so the contact saving in profile worked, 
+
+bring up the error message "Error. Your password does not match your current username. Either edit your password to the original password made for your current username, or edit your username to a new one.<< COMPLETED
+if i get a file_path is not defined error, display an error that the user must load a profile first. << COMPLETED
+also make it so that if the len(contact) is < 0, don't add it into the contact attribute in the profile module.<<COMPLETED
+
+so right now, i can send messages, i can load profile, create new profile and it loads, i can add contacts, the contacts save in the profile, i can edit the profile, i display error messages when user adds a contact that already exists, when they send without loading profile, when the username has a space in add contact, when theres a connection error, i edit the profile data when the user edits their profile data in the gui, i make it so nothing happens when the user presses ok with nothing input or cancel on the add contact, 
+
+next step><><><get the contacts to automatically show up in the tree view when i load a profile
+
+run receive new to get new messages from new contacts
+
+when the user clicks on a contact in the tree view, retrieve all should be triggered the code should iterate through the dsu file for the user and display all messages from and to the user selected in the tree view by using my storage method in the dsu file. 
+
+self.posts_tree.delete(*self.posts_tree.get_children())
+
+next step, get the messages that i send and receive to show up in the main message box.
+
+	NEXT STEPPP. >> fix my code, when i run it, some code saves in the dsu file like the messages sent but the messages received dont always save. find what is happening with the retrieve_all and why it's not loading in the files that have been sent to users. also figure out what's happening with my check_new and why the new messages that are sent to the user aren't displaying in the chat box. KEEP GOING BRO YOU GOT THIS AND YOU WILL MAKE PROGRESS TODAY!!! make it so that my program automatically adds new contacts to the list when it gets a new message from a contact that doesn't exist in the contact list. 
+do git commits as well!
+
+
+NEXT STEP!!!! CMONNNNN YOU GOT THISSSSS!!!>>>>>get the retrieve_new to put new posts onto the chat box. right now something is happening when i call dm_str, the data is there, but i need a way to get it to my check_new method. i will do it!!
+
+NEXT STEPs!!!!!!>>>>	get the message box<<DONE and the big chat box to clear every time i open a new file. display all messages sent and received when i open a new file. make it so that when i get a new message, check if i have the use that sent the message in my contacts and if i dont then add them that way they get added and i can click on the contact to show the message they sent.<<<DONE
+
+next move brother, check new and if the contact isn't in the list then add it to the contact. THEN make it so that the check_new is only ran once the user clicks on a contact because why should they be getting new messages on the home screen from any user when they haven't clicked on any user yet. 
+
+add a feature that gives a notification when there is a new message that pops up as a small window that sounds awesome! That way the user knows to check that contact and then the retrieve all will have stored that new message so all messages will be displayed from that user even the new one!
+
+
+
+style = ttk.Style(root)
+style.theme_use("clam")
+style.configure("Treeview", background="black",
+                fieldbackground="black", foreground="white")
+
+next step>> make it so that the .after stop while there's an error so that CONNECTION ERROR doesn't get spammed lol, then display all messages sent and received when i open a new file. 
+
+
+HIIII.....>>>for some reason when i load the profile a certain way the data doesn't get saved and doesn't load,<<<DONE the last time i tested i entered the same contact twice and it said that I already entered that contact but the contact tree and the dsu file were empty. get all previous messages sent and received to show up on screen when i load a file, get my part 2 right for the autograder, create test modules, make docstrings, run pylint and pycodestyle, make cool style changes so my gui looks different from others.
+
+when i create a new file, the add contact button doesn't add the contacts into the tree view. <<DONE
+
+next step, make it so that the new messages come from the bottom. get all the previous messages sent and received to load every time i click on a contact in the tree view(iterate by key of the self.recipient through my messages attribute and use insert_user_message and insert_contact_message to get the locally saved messages into the gui. get code to work offline(like when i start my code i can display all the locally stored messages without connecting to wifi.
+get all previous messages sent and received to show up on screen when i load a file, get my part 2 right for the autograder, create test modules, make docstrings, run pylint and pycodestyle, make cool style changes so my gui looks different from others.
+
+make the offline mode so that the user can open their profile and all their contacts still come up. So make m insert_contact and insert_user parts for iterating through the messages attribute in the dsu file happen before the self.check_new is run.
+
+so now the messages received doesn't erase when i change the username. the messages actually stay from the last user which is good, i can tell because the username in the dsu file is the new username but the messages are still from the last username. BUUTT when i send a message to that new username, the new messages dont go through and the ones that were leftover from the last user remain untouched with the new messages not going into the dsu file. HOWEVER when i change the username again...the messages received update to the messages that were never added from the last username. and the cycle happens again.
+
+username was changed, the messages received are [[{"1010OO": [{"message": "1", "from": "1010OO", "timestamp": "1679684512.06601"}, {"message": "2", "from": "1010OO", "timestamp": "1679684562.25519"}]}]]], "contacts": ["1010OO"]
+
+i sent a message from the changed username account and everything is good.
+
+sent message to the changed username and  [[{"1010OO": [{"message": "3", "from": "1010OO", "timestamp": "1679684668.78148"}]}]]], "contacts": ["1010OO"] so it replaced the messages received with the new ones.
+
+i switched the username back to the original username, sent a message, and i get this [{"1010OO": [{"message": "1", "from": "1010OO", "timestamp": "1679684512.06601"}, {"message": "2", "from": "1010OO", "timestamp": "1679684562.25519"}, {"message": "8", "from": "1010OO", "timestamp": "1679684762.79555"}]}]]], "contacts": ["1010OO"]
+so the old messages are still there
+i switched back to the changed username and the messages that it received all loaded in. 
+find a way to keep the messages from the previous user when a new user logs in. the file path should be the same so find where the username or something else makes a difference. clearly all messages are being stored somewhere, but they are being stored as if they're two different profiles. all the messages, regardless of the username change, must be stored in the same list. yOU GOT THIS BRO!!!
+
+
+so when the username changes, the messages received stay as the ones from the last user. it isn't until there's a new post that the old messages received go away and only that first message to the new username is in the dsu file. 
+
+its only the 1st index that 's messing up , the 0th index with the messages sent is fine, so add whatever assign.messages[1] is to assign.messages_final[1]. it should only happen when the username changes though because the other times it would just be adding duplicates. 
+
+or why dont i just use the retrieve new and when there's a new message i append it. 
+
+i should only have to call retrieve_all once at the beginning of the program, everything after should be retrieve_new and that will cover all other posts because every post after initial login is technically new right!
+
+this is only one at a time!
+for key in list(dict.keys()) if key in your_list:
+
+pytest --cov=ds_protocol --cov-report html
+pytest --cov=Profile --cov-report html
+pytest --cov=user --cov-report html
+pytest --cov=ds_client --cov-report html
+pytest --cov=ds_messenger --cov-report html
+
+
+
+
+
+do i need to tell the difference between messages sent a received? 
+
+so everything is in a dictionary, every time there's a new message sent or received, create a new list, append the message, from, timestamp into the list, then append the list into the dictionary. i can just put the dict object itself into the list then have a try except for the sender, i can try to add it to the screen with ['recipient'] and if that has a key error it will go to the except and try for ['from']. do that bro you got this. 

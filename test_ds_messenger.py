@@ -1,3 +1,6 @@
+# Julian Aparicio
+# japaric4@uci.edu
+# 74237345
 import unittest
 from ds_messenger import DirectMessenger
 import ds_messenger
@@ -46,6 +49,11 @@ class TestClient(unittest.TestCase):
 
     def test_rec_whtspc(self):
         ds_mess = DirectMessenger("168.235.86.101", "123", "123")
+        result = ds_mess.send("if this works give urself a pat on the back son.", " ")
+        self.assertEqual(result, False)
+
+    def test_conn(self):
+        ds_mess = DirectMessenger("a2312", "123", "123")
         result = ds_mess.send("if this works give urself a pat on the back son.", " ")
         self.assertEqual(result, False)
 
